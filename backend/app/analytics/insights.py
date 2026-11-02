@@ -491,6 +491,7 @@ def follow_ups(db: Session, f: Filters, today: date, when: str, limit: int = 100
             "customer_id": a.customer_id,
             "customer_name": customers.get(a.customer_id),
             "opportunity_name": opps.get(a.opportunity_id),
+            "salesperson_id": a.user_id,
             "salesperson_name": users.get(a.user_id),
             "notes": a.notes,
         }

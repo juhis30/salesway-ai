@@ -16,6 +16,7 @@ interface NavItem {
 const NAV: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: "M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" },
   { href: "/assistant", label: "Ask SaleSway", icon: "M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2zM8 9h8M8 13h5" },
+  { href: "/forecast", label: "Forecast & actions", icon: "M3 3v18h18M7 14l4-4 3 3 6-6M17 7h3v3" },
   { href: "/insights/customers", label: "Customer health", icon: "M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 00-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 000-7.8z" },
   { href: "/insights/products", label: "Product trends", icon: "M3 17l6-6 4 4 8-8M15 7h6v6" },
   { href: "/pipeline", label: "Pipeline", icon: "M3 4h18l-7 8v6l-4 2v-8L3 4z" },

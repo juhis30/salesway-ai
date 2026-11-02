@@ -454,6 +454,78 @@ export interface FollowUp {
   notes: string | null;
 }
 
+// --- Predictions ----------------------------------------------------------------------------
+
+export interface MLModelInfo {
+  id: string;
+  kind: "month_end_forecast" | "next_month_forecast" | "churn" | "deal_win";
+  label: string;
+  version: number;
+  status: "active" | "rejected" | "insufficient_data" | "retired";
+  algorithm: string;
+  trained_at: string;
+  training_rows: number;
+  metrics: Record<string, unknown>;
+  notes: string | null;
+}
+
+export interface MonthEndForecast {
+  available: boolean;
+  reason: string | null;
+  month: string | null;
+  month_end: string | null;
+  as_of: string | null;
+  level: "company" | "individual" | null;
+  target: number | null;
+  method_label: string | null;
+  so_far: number | null;
+  forecast: number | null;
+  lower: number | null;
+  upper: number | null;
+  chance_of_target: number | null;
+  based_on_samples: number | null;
+  tested_error_pct: number | null;
+  pace_error_pct: number | null;
+  daily: { date: string; cumulative: number }[];
+  model: MLModelInfo | null;
+}
+
+export interface NextMonthForecast {
+  available: boolean;
+  reason: string | null;
+  month: string | null;
+  forecast: string | null;
+  lower: string | null;
+  upper: string | null;
+  based_on_samples: number | null;
+  tested_error_pct: number | null;
+}
+
+export interface Scores {
+  available: boolean;
+  reason: string | null;
+  as_of: string | null;
+  model: MLModelInfo | null;
+  rows: { entity_id: string; name: string; owner_name: string | null; probability: number; value: string | null; signals: string[] }[];
+}
+
+export type ActionKind = "follow_up" | "win_back" | "revive_deal" | "cross_sell";
+
+export interface NextAction {
+  id: string;
+  kind: ActionKind;
+  title: string;
+  reason: string;
+  expected_value: string | null;
+  score: number | null;
+  status: "open" | "done" | "dismissed";
+  as_of: string;
+  owner_id: string;
+  owner_name: string | null;
+  entity_type: string;
+  entity_id: string;
+}
+
 // --- Assistant & WhatsApp -------------------------------------------------------------------
 
 export interface ChatMessage {

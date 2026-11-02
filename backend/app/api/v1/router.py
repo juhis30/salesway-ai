@@ -1,8 +1,9 @@
 from fastapi import APIRouter
 
-from app.api.v1 import analytics, assistant, auth, catalog, imports, insights, organization, whatsapp
+from app.api.v1 import analytics, assistant, auth, catalog, imports, insights, organization, predictions, whatsapp
 
 api_router = APIRouter()
+api_router.include_router(predictions.router)
 api_router.include_router(assistant.router)
 api_router.include_router(whatsapp.router)
 api_router.include_router(insights.router)

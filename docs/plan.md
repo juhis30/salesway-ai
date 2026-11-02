@@ -71,9 +71,13 @@ Key rules carried from the blueprint:
 - ⏭ Later: scheduled daily briefings & alerts over approved WhatsApp templates (needs a job
   scheduler), voice notes, Hindi replies from the rule-based path
 
-### Phase 4: Predictive intelligence
-- Month-end forecast, target-achievement probability, churn scoring, next best action
-- Model versioning, stored predictions, evaluation metrics (no invented confidence)
+### Phase 4: Predictive intelligence ✅ (see docs/predictions.md)
+- ✅ Month-end forecast chosen by back-testing 3 methods (demo: 6.4% error vs 8.2% for pace), range
+  and chance of target from past errors; next-month forecast (rough guide)
+- ✅ Churn and deal-win models with an accuracy gate: used only if they beat the existing rule on
+  unseen data (demo: both correctly kept off — rule AUC 0.867 vs model 0.878; deals no signal)
+- ✅ Next best actions (follow-ups, win-back, stalled deals, cross-sell) with Done/Dismiss
+- ✅ Model versions, metrics and stored predictions; Forecast & actions page; assistant uses the forecast
 
 ### Phase 5: Integrations: Zoho / HubSpot / Salesforce connectors mapping to the same tables
 ### Phase 6: Production: Postgres + RLS, Docker, AWS, Redis/Celery, observability, billing

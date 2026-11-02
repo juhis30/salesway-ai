@@ -10,6 +10,7 @@ also exercises the same validation a customer upload goes through.
 
 import argparse
 import csv
+import io
 import random
 from collections import defaultdict
 from datetime import date, timedelta
@@ -22,6 +23,7 @@ from sqlalchemy.orm import Session
 from app.analytics.periods import add_months, month_start, org_today
 from app.core.database import SessionLocal
 from app.core.security import hash_password
+from app.ml.train import train_organization
 from app.models import ImportEntity, Organization, Role, Team, Territory, User
 from app.services import importer
 
@@ -85,6 +87,16 @@ SEGMENTS = {
     "Modern Trade": (15, 8, (15, 80)),
     "HoReCa": (20, 5, (8, 45)),
 }
+# Each type of customer has a core range most of them stock, plus a few products of their own;
+# the customers missing a core item are what the cross-sell suggestions find.
+SEGMENT_CORE = {
+    "Kirana": ["Chakki Atta 5kg", "Sugar 5kg", "Toor Dal 1kg", "Mustard Oil 1L", "Glucose Biscuits Family Pack", "Detergent Powder 1kg"],
+    "Wholesaler": ["Chakki Atta 10kg", "Basmati Rice 5kg", "Sona Masoori Rice 5kg", "Sugar 5kg", "Soybean Oil 5L"],
+    "Modern Trade": ["Basmati Rice 5kg", "Filter Coffee 200g", "Assam Tea 500g", "Herbal Shampoo 340ml", "Toothpaste 150g", "Bhujia Namkeen 400g"],
+    "HoReCa": ["Basmati Rice 5kg", "Chakki Atta 10kg", "Soybean Oil 5L", "Garam Masala 100g", "Red Chilli Powder 200g", "Turmeric Powder 200g"],
+}
+CORE_STOCKED = 0.8  # chance a customer stocks each core product of their type
+
 CITIES = {"Delhi NCR": ["Delhi", "Gurugram", "Noida"], "Punjab": ["Ludhiana", "Amritsar", "Jalandhar"],
           "Mumbai": ["Mumbai", "Thane", "Navi Mumbai"], "Pune": ["Pune", "Pimpri", "Hadapsar"]}
 # Festive uplift in Oct/Nov, softer monsoon months.
@@ -123,15 +135,22 @@ def generate(rng: random.Random, today: date) -> dict[str, list[dict]]:
                 "salesperson_email": email_for(rep),
                 "mobile": f"+9198{rng.randint(10_000_000, 99_999_999)}",
             })
-            # ~10% go dormant (stop ordering 40-150 days ago); ~10% are recently acquired.
-            roll = rng.random()
-            active_from = start + timedelta(days=rng.randint(200, 330)) if roll > 0.9 else start
-            active_to = today - timedelta(days=rng.randint(40, 150)) if roll < 0.1 else today
+            # ~10% are recently acquired; customers who stop ordering are picked below.
+            active_from = start + timedelta(days=rng.randint(200, 330)) if rng.random() > 0.9 else start
+            active_to = today
+            index = {p["name"]: i for i, p in enumerate(products)}
+            core = [index[name] for name in SEGMENT_CORE[segment] if rng.random() < CORE_STOCKED]
+            extras = rng.sample([i for i in range(len(products)) if i not in core], 8 - len(core))
             profiles.append({
                 "code": code, "rep": rep, "segment": segment,
                 "size": rng.uniform(0.6, 1.6), "active_from": active_from, "active_to": active_to,
-                "favourites": rng.sample(range(len(products)), 8),
+                "favourites": core + extras,
             })
+
+    # Exactly 15% of established customers stop ordering at some point in the last 30-200 days.
+    established = [p for p in profiles if p["active_from"] == start]
+    for p in rng.sample(established, round(len(profiles) * 0.15)):
+        p["active_to"] = today - timedelta(days=rng.randint(30, 200))
 
     orders, seq = [], defaultdict(int)
     total_days = (today - start).days
@@ -341,6 +360,51 @@ def import_file(db: Session, org_id, entity: ImportEntity, path: Path, content: 
     return counts
 
 
+def populate(db: Session, today: date, csv_dir: Path | None = None, log=lambda *_: None) -> tuple[Organization, dict]:
+    """Create the demo organisation with data up to `today`, import it and train the models.
+
+    Used by `python -m app.seed` and by tests (with a fixed `today` and no CSV output).
+    """
+    org = Organization(name=ORG_NAME, industry="FMCG Distribution", timezone="Asia/Kolkata", plan="demo")
+    db.add(org)
+    db.flush()
+
+    territories = {name: Territory(organization_id=org.id, name=name, region=region) for name, region in TERRITORIES}
+    teams = {name: Team(organization_id=org.id, name=name) for name in {p[3] for p in PEOPLE if p[3]}}
+    db.add_all([*territories.values(), *teams.values()])
+    db.flush()
+
+    password_hash = hash_password(DEMO_PASSWORD)
+    for i, (name, role, territory, team) in enumerate(PEOPLE):
+        db.add(User(
+            organization_id=org.id, email=email_for(name), full_name=name, role=role,
+            hashed_password=password_hash, phone=f"+91900000{i:04d}",
+            territory_id=territories[territory].id if territory else None,
+            team_id=teams[team].id if team else None,
+        ))
+    db.flush()
+
+    data = generate(random.Random(42), today)
+    for entity in (ImportEntity.CUSTOMERS, ImportEntity.PRODUCTS, ImportEntity.ORDERS, ImportEntity.TARGETS,
+                   ImportEntity.OPPORTUNITIES, ImportEntity.ACTIVITIES):
+        name = f"{entity.value}.csv"
+        content = write_csv(csv_dir / name, data[entity.value]) if csv_dir else _csv_bytes(data[entity.value])
+        counts = import_file(db, org.id, entity, Path(name), content)
+        log(f"  {entity.value:<10} {counts}")
+    db.commit()
+    trained = train_organization(db, org, today)
+    db.commit()
+    return org, trained
+
+
+def _csv_bytes(rows: list[dict]) -> bytes:
+    buffer = io.StringIO()
+    writer = csv.DictWriter(buffer, fieldnames=list(rows[0]))
+    writer.writeheader()
+    writer.writerows(rows)
+    return buffer.getvalue().encode()
+
+
 def seed(reset: bool = False) -> None:
     db = SessionLocal()
     try:
@@ -353,34 +417,9 @@ def seed(reset: bool = False) -> None:
             db.commit()
             print("Deleted existing demo organisation.")
 
-        org = Organization(name=ORG_NAME, industry="FMCG Distribution", timezone="Asia/Kolkata", plan="demo")
-        db.add(org)
-        db.flush()
-
-        territories = {name: Territory(organization_id=org.id, name=name, region=region) for name, region in TERRITORIES}
-        teams = {name: Team(organization_id=org.id, name=name) for name in {p[3] for p in PEOPLE if p[3]}}
-        db.add_all([*territories.values(), *teams.values()])
-        db.flush()
-
-        password_hash = hash_password(DEMO_PASSWORD)
-        for i, (name, role, territory, team) in enumerate(PEOPLE):
-            db.add(User(
-                organization_id=org.id, email=email_for(name), full_name=name, role=role,
-                hashed_password=password_hash, phone=f"+91900000{i:04d}",
-                territory_id=territories[territory].id if territory else None,
-                team_id=teams[team].id if team else None,
-            ))
-        db.flush()
-
-        data = generate(random.Random(42), org_today(org.timezone))
-        for entity in (ImportEntity.CUSTOMERS, ImportEntity.PRODUCTS, ImportEntity.ORDERS, ImportEntity.TARGETS,
-                       ImportEntity.OPPORTUNITIES, ImportEntity.ACTIVITIES):
-            path = SAMPLE_DIR / f"{entity.value}.csv"
-            content = write_csv(path, data[entity.value])
-            counts = import_file(db, org.id, entity, path, content)
-            print(f"  {entity.value:<10} {counts}")
-
-        db.commit()
+        org, trained = populate(db, org_today("Asia/Kolkata"), csv_dir=SAMPLE_DIR, log=print)
+        print(f"  models     forecast={trained['month_end_forecast']} churn={trained['churn']} "
+              f"deal_win={trained['deal_win']} actions={trained['recommendations']}")
         print(f"\nSeeded '{ORG_NAME}'. Sample CSVs written to {SAMPLE_DIR}")
         print(f"Log in as any user with password {DEMO_PASSWORD}, e.g.:")
         for name, role, *_ in PEOPLE[:3] + PEOPLE[5:6] + PEOPLE[9:10]:

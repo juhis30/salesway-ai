@@ -15,6 +15,7 @@ from app.ai.periods import resolve
 from app.ai.schema import Facts, Intent, Interpretation, PeriodSpec
 from app.analytics import insights, metrics, service
 from app.analytics.periods import month_end, month_start, previous_period
+from app.ml import serving
 from app.models import ORG_WIDE_ROLES, Organization, Role, User
 from app.services.access import resolve_salesperson_filter
 
@@ -162,6 +163,12 @@ class Executor:
         days_in_month = (month_end(start) - start).days + 1
         days_elapsed = (end - start).days + 1
         projection = metrics.straight_line_projection(o["revenue"], days_elapsed, days_in_month) if in_progress else None
+        # Prefer the trained forecast (tested on past months) over the plain pace, where one exists.
+        model_forecast = None
+        if in_progress and not (r.product or r.territory or r.customer):
+            result = serving.month_end_forecast(self.db, self.user.organization_id, self.today, f.salesperson_ids)
+            if result["available"]:
+                model_forecast = result
         facts = Facts(
             intent=Intent.PROJECTION if projection_focus else Intent.TARGET,
             title=f"{'Month-end outlook' if projection_focus else 'Target'} · {label}",
@@ -178,12 +185,17 @@ class Executor:
                 "projected_achievement_pct": metrics.achievement_pct(projection, o["target"]) if projection is not None else None,
                 "days_elapsed": days_elapsed,
                 "days_in_month": days_in_month,
+                **(_forecast_figures(model_forecast) if model_forecast else {}),
             },
             suggestions=["Who should I follow up with?", "Top 5 customers this month", "Compare with last month"],
         )
         if o["target"] is None:
             facts.notes.append("No target is set for this period" + (" (targets aren't split by product or territory)." if (r.product or r.territory or r.customer) else "."))
-        if projection is not None:
+        if model_forecast:
+            facts.notes.append(
+                f"Forecast method: {model_forecast['method_label']}. Tested on past months it was off by "
+                f"{model_forecast['tested_error_pct']}% on average; the range covers 8 in 10 past outcomes.")
+        elif projection is not None:
             facts.notes.append("The outlook assumes the pace so far continues; it is not a forecast model.")
         if o["target"] is not None and o["target_gap"] is not None and o["target_gap"] > 0 and in_progress:
             facts.actions.append("Focus on customers who are due to reorder: ask “who should I follow up with?”")
@@ -452,6 +464,18 @@ class Executor:
             sections=sections,
             suggestions=["Which deals are stalled?", "Top 5 customers this month"],
         )
+
+
+def _forecast_figures(result: dict) -> dict:
+    money = lambda v: None if v is None else Decimal(str(round(v)))  # noqa: E731
+    chance = result["chance_of_target"]
+    return {
+        "forecast": money(result["forecast"]),
+        "forecast_lower": money(result["lower"]),
+        "forecast_upper": money(result["upper"]),
+        "chance_of_target_pct": None if chance is None else round(chance * 100),
+        "forecast_tested_error_pct": result["tested_error_pct"],
+    }
 
 
 STARTERS = [

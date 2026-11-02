@@ -14,6 +14,7 @@ from app.models.enums import (
     Role,
 )
 from app.models.imports import ImportJob
+from app.models.ml import MLModel, Prediction, Recommendation
 from app.models.pipeline import Opportunity, SalesActivity
 from app.models.sales import Customer, Product, SalesOrder, SalesOrderItem, SalesTarget
 
@@ -28,6 +29,9 @@ __all__ = [
     "SalesActivity",
     "AuditLog",
     "Conversation",
+    "MLModel",
+    "Prediction",
+    "Recommendation",
     "Message",
     "WhatsAppAccount",
     "Customer",

@@ -83,7 +83,12 @@ def _target(f: Facts) -> list[str]:
             out.append(f"• Needed: {inr_short(g['required_daily_run_rate'])} a day for the {g['days_left']} days left")
     elif gap is not None:
         out.append(f"• Target exceeded by {inr_short(-gap)} 🎉")
-    if g["projected_revenue"] is not None:
+    if g.get("forecast") is not None:
+        out.append(f"• Forecast for the month: *{inr_short(g['forecast'])}* "
+                   f"(likely {inr_short(g['forecast_lower'])}–{inr_short(g['forecast_upper'])})")
+        if g["chance_of_target_pct"] is not None:
+            out.append(f"• Chance of reaching the target: *{g['chance_of_target_pct']}%*")
+    elif g["projected_revenue"] is not None:
         verdict = "on track ✅" if g["projected_achievement_pct"] >= 100 else "at risk of missing the target ⚠️"
         out.append(f"• At the current pace you'd finish around *{inr_short(g['projected_revenue'])}* "
                    f"({pct(g['projected_achievement_pct'])} of target): {verdict}")

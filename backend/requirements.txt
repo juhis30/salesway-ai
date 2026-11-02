@@ -13,6 +13,7 @@ openpyxl==3.1.5
 tzdata==2024.2
 httpx==0.28.1        # WhatsApp Cloud API calls
 anthropic==2.3.0     # only used when LLM_PROVIDER=anthropic
+scikit-learn==1.7.2  # predictive models (brings numpy, scipy)
 
 # tests
 pytest==8.3.4
