@@ -1,0 +1,93 @@
+customer_code,customer_name,segment,city,territory,salesperson_email,mobile
+C0001,Sharma Enterprises,Wholesaler,Delhi,Delhi NCR,amit@shakti-demo.in,+919828728463
+C0002,Sharma Kirana,Kirana,Delhi,Delhi NCR,pooja@shakti-demo.in,+919870291817
+C0003,Joshi General Store,Kirana,Gurugram,Delhi NCR,amit@shakti-demo.in,+919822981052
+C0004,Malhotra Provision Store,Kirana,Noida,Delhi NCR,amit@shakti-demo.in,+919819335534
+C0005,Mehta Kirana,Kirana,Noida,Delhi NCR,pooja@shakti-demo.in,+919896977837
+C0006,Kulkarni General Store,Kirana,Gurugram,Delhi NCR,pooja@shakti-demo.in,+919845935572
+C0007,Kulkarni Provision Store,Kirana,Noida,Delhi NCR,pooja@shakti-demo.in,+919863606628
+C0008,Chopra General Store,Kirana,Gurugram,Delhi NCR,pooja@shakti-demo.in,+919889978790
+C0009,Joshi Supermart,Modern Trade,Gurugram,Delhi NCR,pooja@shakti-demo.in,+919831227574
+C0010,Naik Kirana,Kirana,Gurugram,Delhi NCR,amit@shakti-demo.in,+919831682744
+C0011,Malhotra Caterers,HoReCa,Delhi,Delhi NCR,amit@shakti-demo.in,+919886149359
+C0012,Patel Dhaba,HoReCa,Delhi,Delhi NCR,pooja@shakti-demo.in,+919882383095
+C0013,Kulkarni Wholesale,Wholesaler,Gurugram,Delhi NCR,amit@shakti-demo.in,+919812823170
+C0014,Joshi Restaurant,HoReCa,Gurugram,Delhi NCR,amit@shakti-demo.in,+919899788677
+C0015,Chopra Provision Store,Kirana,Gurugram,Delhi NCR,pooja@shakti-demo.in,+919872682989
+C0016,Mittal Mart,Kirana,Gurugram,Delhi NCR,amit@shakti-demo.in,+919834627347
+C0017,Agarwal Caterers,HoReCa,Gurugram,Delhi NCR,amit@shakti-demo.in,+919875181648
+C0018,Jain Kirana,Kirana,Delhi,Delhi NCR,pooja@shakti-demo.in,+919817849494
+C0019,Naik General Store,Kirana,Delhi,Delhi NCR,amit@shakti-demo.in,+919889864260
+C0020,Naik Provision Store,Kirana,Delhi,Delhi NCR,pooja@shakti-demo.in,+919899889098
+C0021,Bansal General Store,Kirana,Jalandhar,Punjab,gurpreet@shakti-demo.in,+919845594597
+C0022,Naik Traders,Wholesaler,Jalandhar,Punjab,harleen@shakti-demo.in,+919823903144
+C0023,Shah Hypermarket,Modern Trade,Jalandhar,Punjab,harleen@shakti-demo.in,+919875569635
+C0024,Arora Supermart,Modern Trade,Jalandhar,Punjab,harleen@shakti-demo.in,+919867403166
+C0025,Gupta Provision Store,Kirana,Ludhiana,Punjab,harleen@shakti-demo.in,+919858024342
+C0026,Patel Foods,HoReCa,Ludhiana,Punjab,gurpreet@shakti-demo.in,+919854585178
+C0027,Deshmukh Caterers,HoReCa,Amritsar,Punjab,gurpreet@shakti-demo.in,+919856930359
+C0028,Arora Dhaba,HoReCa,Jalandhar,Punjab,harleen@shakti-demo.in,+919881969657
+C0029,Joshi Mart,Kirana,Amritsar,Punjab,gurpreet@shakti-demo.in,+919887388337
+C0030,Joshi Provision Store,Kirana,Jalandhar,Punjab,gurpreet@shakti-demo.in,+919850308572
+C0031,Goyal Hypermarket,Modern Trade,Jalandhar,Punjab,gurpreet@shakti-demo.in,+919886384014
+C0032,Sethi Mart,Kirana,Jalandhar,Punjab,gurpreet@shakti-demo.in,+919873509974
+C0033,Agarwal Wholesale,Wholesaler,Ludhiana,Punjab,harleen@shakti-demo.in,+919836726767
+C0034,Goyal Mart,Kirana,Ludhiana,Punjab,harleen@shakti-demo.in,+919829806690
+C0035,Mittal Wholesale,Wholesaler,Amritsar,Punjab,gurpreet@shakti-demo.in,+919827896471
+C0036,Mittal Foods,HoReCa,Jalandhar,Punjab,gurpreet@shakti-demo.in,+919873709724
+C0037,Agarwal Provision Store,Kirana,Amritsar,Punjab,gurpreet@shakti-demo.in,+919855076693
+C0038,Shah Mart,Kirana,Jalandhar,Punjab,harleen@shakti-demo.in,+919812621534
+C0039,Mittal Hypermarket,Modern Trade,Amritsar,Punjab,gurpreet@shakti-demo.in,+919839450273
+C0040,Mittal Restaurant,HoReCa,Jalandhar,Punjab,harleen@shakti-demo.in,+919885751409
+C0041,Goyal Provision Store,Kirana,Thane,Mumbai,sneha@shakti-demo.in,+919820993268
+C0042,Shah Restaurant,HoReCa,Mumbai,Mumbai,rohan@shakti-demo.in,+919826941092
+C0043,Bansal Caterers,HoReCa,Mumbai,Mumbai,sneha@shakti-demo.in,+919887669750
+C0044,Malhotra General Store,Kirana,Thane,Mumbai,rohan@shakti-demo.in,+919881503856
+C0045,Sethi Caterers,HoReCa,Mumbai,Mumbai,sneha@shakti-demo.in,+919880027662
+C0046,Agarwal Dhaba,HoReCa,Mumbai,Mumbai,sneha@shakti-demo.in,+919872372114
+C0047,Joshi Fresh Mart,Modern Trade,Navi Mumbai,Mumbai,sneha@shakti-demo.in,+919811362459
+C0048,Sethi Supermart,Modern Trade,Thane,Mumbai,rohan@shakti-demo.in,+919839742165
+C0049,Mittal Dhaba,HoReCa,Navi Mumbai,Mumbai,sneha@shakti-demo.in,+919870900658
+C0050,Deshmukh Provision Store,Kirana,Mumbai,Mumbai,sneha@shakti-demo.in,+919836054020
+C0051,Jain Distributors,Wholesaler,Mumbai,Mumbai,rohan@shakti-demo.in,+919887049595
+C0052,Gupta Wholesale,Wholesaler,Navi Mumbai,Mumbai,rohan@shakti-demo.in,+919850780112
+C0053,Sethi Enterprises,Wholesaler,Thane,Mumbai,sneha@shakti-demo.in,+919886320155
+C0054,Patel General Store,Kirana,Mumbai,Mumbai,rohan@shakti-demo.in,+919864830300
+C0055,Arora Hypermarket,Modern Trade,Thane,Mumbai,rohan@shakti-demo.in,+919825405014
+C0056,Malhotra Fresh Mart,Modern Trade,Thane,Mumbai,rohan@shakti-demo.in,+919850814428
+C0057,Agarwal Supermart,Modern Trade,Navi Mumbai,Mumbai,rohan@shakti-demo.in,+919846173157
+C0058,Deshmukh General Store,Kirana,Thane,Mumbai,sneha@shakti-demo.in,+919864807553
+C0059,Sethi Restaurant,HoReCa,Thane,Mumbai,sneha@shakti-demo.in,+919853389073
+C0060,Mehta Mart,Kirana,Mumbai,Mumbai,sneha@shakti-demo.in,+919837321124
+C0061,Patel Fresh Mart,Modern Trade,Hadapsar,Pune,aditya@shakti-demo.in,+919864759583
+C0062,Chopra Fresh Mart,Modern Trade,Pune,Pune,kavya@shakti-demo.in,+919871308842
+C0063,Naik Dhaba,HoReCa,Pimpri,Pune,aditya@shakti-demo.in,+919850071487
+C0064,Mittal Distributors,Wholesaler,Pimpri,Pune,kavya@shakti-demo.in,+919835320492
+C0065,Jain Foods,HoReCa,Pune,Pune,aditya@shakti-demo.in,+919877416376
+C0066,Jain Restaurant,HoReCa,Pimpri,Pune,kavya@shakti-demo.in,+919855440919
+C0067,Gupta Restaurant,HoReCa,Hadapsar,Pune,aditya@shakti-demo.in,+919848571356
+C0068,Gupta Dhaba,HoReCa,Pimpri,Pune,aditya@shakti-demo.in,+919858112135
+C0069,Goyal Wholesale,Wholesaler,Hadapsar,Pune,kavya@shakti-demo.in,+919829208935
+C0070,Sethi Provision Store,Kirana,Hadapsar,Pune,kavya@shakti-demo.in,+919866949781
+C0071,Sharma Mart,Kirana,Pune,Pune,kavya@shakti-demo.in,+919885957706
+C0072,Shah Provision Store,Kirana,Hadapsar,Pune,aditya@shakti-demo.in,+919823041121
+C0073,Chopra Kirana,Kirana,Pune,Pune,aditya@shakti-demo.in,+919882398083
+C0074,Kulkarni Distributors,Wholesaler,Pune,Pune,kavya@shakti-demo.in,+919862958901
+C0075,Deshmukh Restaurant,HoReCa,Hadapsar,Pune,kavya@shakti-demo.in,+919839711402
+C0076,Malhotra Foods,HoReCa,Pune,Pune,aditya@shakti-demo.in,+919841514326
+C0077,Jain Fresh Mart,Modern Trade,Pimpri,Pune,aditya@shakti-demo.in,+919892631441
+C0078,Mehta Provision Store,Kirana,Pimpri,Pune,aditya@shakti-demo.in,+919847028180
+C0079,Sharma Traders,Wholesaler,Pune,Pune,kavya@shakti-demo.in,+919826901217
+C0080,Sharma Fresh Mart,Modern Trade,Pune,Pune,aditya@shakti-demo.in,+919882506491
+P001,Patel Caterers (New),HoReCa,Delhi,Delhi NCR,amit@shakti-demo.in,+919726553229
+P002,Bansal Distributors (New),Wholesaler,Ludhiana,Punjab,harleen@shakti-demo.in,+919790233387
+P003,Mittal Restaurant (New),HoReCa,Navi Mumbai,Mumbai,sneha@shakti-demo.in,+919772785982
+P004,Mittal Traders (New),Wholesaler,Pimpri,Pune,kavya@shakti-demo.in,+919749560488
+P005,Kulkarni Caterers (New),HoReCa,Gurugram,Delhi NCR,amit@shakti-demo.in,+919730879678
+P006,Goyal Traders (New),Wholesaler,Ludhiana,Punjab,gurpreet@shakti-demo.in,+919739146843
+P007,Deshmukh Enterprises (New),Wholesaler,Thane,Mumbai,rohan@shakti-demo.in,+919780722730
+P008,Jain Foods (New),HoReCa,Pune,Pune,kavya@shakti-demo.in,+919783934242
+P009,Agarwal Wholesale (New),Wholesaler,Gurugram,Delhi NCR,pooja@shakti-demo.in,+919717281420
+P010,Mehta Foods (New),HoReCa,Jalandhar,Punjab,gurpreet@shakti-demo.in,+919771357253
+P011,Deshmukh Dhaba (New),HoReCa,Mumbai,Mumbai,rohan@shakti-demo.in,+919771465006
+P012,Kulkarni Wholesale (New),Wholesaler,Pimpri,Pune,kavya@shakti-demo.in,+919790006675

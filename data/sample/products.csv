@@ -1,0 +1,29 @@
+product_code,product_name,category,price
+SKU-001,Chakki Atta 5kg,Staples,265
+SKU-002,Chakki Atta 10kg,Staples,510
+SKU-003,Basmati Rice 5kg,Staples,620
+SKU-004,Sona Masoori Rice 5kg,Staples,410
+SKU-005,Toor Dal 1kg,Staples,165
+SKU-006,Moong Dal 1kg,Staples,150
+SKU-007,Chana Dal 1kg,Staples,110
+SKU-008,Sugar 5kg,Staples,245
+SKU-009,Mustard Oil 1L,Edible Oil,175
+SKU-010,Sunflower Oil 1L,Edible Oil,155
+SKU-011,Groundnut Oil 1L,Edible Oil,210
+SKU-012,Soybean Oil 5L,Edible Oil,690
+SKU-013,Turmeric Powder 200g,Spices,62
+SKU-014,Red Chilli Powder 200g,Spices,78
+SKU-015,Garam Masala 100g,Spices,85
+SKU-016,Coriander Powder 200g,Spices,55
+SKU-017,Assam Tea 500g,Beverages,260
+SKU-018,Filter Coffee 200g,Beverages,340
+SKU-019,Mango Drink 1.2L,Beverages,70
+SKU-020,Bhujia Namkeen 400g,Snacks,95
+SKU-021,Glucose Biscuits Family Pack,Snacks,30
+SKU-022,Milk Rusk 300g,Snacks,60
+SKU-023,Neem Bath Soap 4-pack,Personal Care,160
+SKU-024,Herbal Shampoo 340ml,Personal Care,210
+SKU-025,Toothpaste 150g,Personal Care,98
+SKU-026,Detergent Powder 1kg,Household,120
+SKU-027,Dishwash Bar 3-pack,Household,45
+SKU-028,Floor Cleaner 1L,Household,170
