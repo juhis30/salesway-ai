@@ -7,7 +7,7 @@
 | Database      | PostgreSQL + RLS + pgvector     | SQLite. Postgres isn't installed; one env var switches later.                      |
 | Tenant safety | Postgres Row Level Security     | Every query filters `organization_id` in the app layer, covered by tests. Add RLS on Postgres. |
 | Runtime       | Docker Compose                  | Plain Python (venv). Dockerfiles come in the production phase.                     |
-| LLM           | Bedrock / open / Indian models  | Provider interface with a **mock** adapter until an API key is available.          |
+| LLM           | Bedrock / open / Indian models  | Provider interface: rule-based **mock** by default; Claude adapter ready (needs a key). |
 | Jobs / cache  | Celery + Redis                  | Not needed yet; added with scheduled briefings/alerts.                             |
 | Frontend      | Next.js + Tailwind + Recharts   | Phase 2. **Requires Node 18+** (machine currently has Node 10).                    |
 
@@ -59,11 +59,17 @@ Key rules carried from the blueprint:
   (weighted value, win rate, stalled & overdue deals), team activity screen (visits, calls,
   visit-to-order rate, follow-ups with "mark done"), dashboard "needs attention" strip
 
-### Phase 3: AI copilot
-- Provider interface (mock → Claude/Bedrock/Sarvam), intent taxonomy, entity and
-  time-period resolution ("this month", "last month", "my team")
-- Conversation memory, grounding checks, audit trail of questions and answers
-- Web chat first, then WhatsApp Cloud API webhook (signature check, idempotency, opt-in)
+### Phase 3: AI copilot ✅ (see docs/assistant.md)
+- ✅ Provider interface: rule-based mock (default, no key) and Claude (`LLM_PROVIDER=anthropic`)
+- ✅ 15 intents, period resolution (incl. Indian FY, Hinglish), fuzzy name matching with
+  "which one did you mean?", follow-ups ("and last month?", "that customer"), 30-min context
+- ✅ Executor runs only approved analytics functions within the user's scope; grounding check
+  discards model replies containing numbers the engine didn't produce; full audit trail
+- ✅ Web chat ("Ask SaleSway") with "based on" transparency and suggestions
+- ✅ WhatsApp Cloud API webhook: verification, HMAC signature, tenant routing by business
+  number, user by phone, idempotency, STOP/START opt-out, delivery receipts, admin simulator
+- ⏭ Later: scheduled daily briefings & alerts over approved WhatsApp templates (needs a job
+  scheduler), voice notes, Hindi replies from the rule-based path
 
 ### Phase 4: Predictive intelligence
 - Month-end forecast, target-achievement probability, churn scoring, next best action

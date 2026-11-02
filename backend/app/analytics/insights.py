@@ -125,7 +125,8 @@ def customer_health(db: Session, f: Filters, status_filter: str | None = None, l
             reason = f"No order for {days_since} days; usually orders every {round(expected_gap)} days"
         else:
             status = "active"
-            reason = f"Ordered {days_since} days ago; usually every {round(expected_gap)} days"
+            when = "today" if days_since == 0 else "yesterday" if days_since == 1 else f"{days_since} days ago"
+            reason = f"Ordered {when}; usually every {round(expected_gap)} days"
         summary[status] += 1
 
         if first >= f.start:

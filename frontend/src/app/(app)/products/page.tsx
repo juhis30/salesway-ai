@@ -10,7 +10,9 @@ export default function ProductsPage() {
   const [search, setSearch] = useState("");
   const [offset, setOffset] = useState(0);
   const debouncedSearch = useDebounced(search);
-  useEffect(() => setOffset(0), [debouncedSearch]);
+  useEffect(() => {
+    setOffset(0);
+  }, [debouncedSearch]);
 
   const products = useApi<Page<Product>>("/products", { search: debouncedSearch, limit: PAGE_SIZE, offset });
 

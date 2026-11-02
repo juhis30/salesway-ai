@@ -15,12 +15,14 @@ interface NavItem {
 
 const NAV: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: "M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" },
+  { href: "/assistant", label: "Ask SaleSway", icon: "M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2zM8 9h8M8 13h5" },
   { href: "/insights/customers", label: "Customer health", icon: "M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 00-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 000-7.8z" },
   { href: "/insights/products", label: "Product trends", icon: "M3 17l6-6 4 4 8-8M15 7h6v6" },
   { href: "/pipeline", label: "Pipeline", icon: "M3 4h18l-7 8v6l-4 2v-8L3 4z" },
   { href: "/activity", label: "Team activity", icon: "M22 12h-4l-3 9L9 3l-3 9H2" },
   { href: "/customers", label: "Customers", icon: "M16 11a4 4 0 10-8 0 4 4 0 008 0zM4 21a8 8 0 0116 0" },
   { href: "/products", label: "Products", icon: "M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8" },
+  { href: "/whatsapp", label: "WhatsApp", icon: "M3 21l1.7-5A9 9 0 1112 21a9 9 0 01-4.3-1.1L3 21zM9 10c0 3 2 5 5 5l1.5-1.5-2-1-1 1c-1 0-2-1-2-2l1-1-1-2L9 10z", show: isAdmin },
   { href: "/imports", label: "Data import", icon: "M12 3v12m0 0l-4-4m4 4l4-4M4 17v3h16v-3", show: canImport },
   { href: "/users", label: "Users & teams", icon: "M17 20v-2a4 4 0 00-4-4H7a4 4 0 00-4 4v2M10 10a4 4 0 100-8 4 4 0 000 8zM21 20v-2a4 4 0 00-3-3.87M16 2.13a4 4 0 010 7.75", show: (r) => r !== "sales_executive" },
 ];
@@ -69,7 +71,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     if (!loading && !me) router.replace("/login");
   }, [loading, me, router]);
 
-  useEffect(() => setMenuOpen(false), [pathname]);
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
 
   if (loading || !me) {
     return <div className="flex min-h-screen items-center justify-center text-sm text-muted">Loading…</div>;

@@ -1,9 +1,9 @@
 # SaleSway AI
 
 AI-powered sales intelligence for Indian sales teams: upload your sales data, see real
-analytics, and (from Phase 3) ask questions in plain language on WhatsApp.
+analytics, and ask questions in plain language on the web or WhatsApp.
 
-> **Status: Phase 2 in progress: web dashboard live.** See [docs/plan.md](docs/plan.md).
+> **Status: Phases 1–3 complete: analytics, web dashboard and the AI assistant (web + WhatsApp).** See [docs/plan.md](docs/plan.md) and [docs/assistant.md](docs/assistant.md).
 
 ## Run it locally (Windows, no Docker)
 
@@ -28,7 +28,7 @@ npm install
 npm run dev            # or: npm run build; npm start
 ```
 
-Open **http://localhost:3000** and use the demo-account buttons on the sign-in page.
+Open **http://localhost:3000** and use the demo-account buttons on the sign-in page. Try **Ask SaleSway** in the sidebar, or (as the admin) the WhatsApp page's simulator.
 
 API docs are at **http://localhost:8000/docs**. To call protected endpoints there, run
 `POST /api/v1/auth/login`, copy the `access_token`, click **Authorize** and paste it in.

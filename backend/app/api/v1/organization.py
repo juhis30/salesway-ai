@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
@@ -159,6 +160,8 @@ def update_user(
 
     for field, value in changes.items():
         setattr(user, field, value)
+    if changes.get("whatsapp_opt_in"):
+        user.whatsapp_opt_in_at = datetime.now(timezone.utc)
     audit.record(
         db, actor.organization_id, actor.id, "user.updated", "user", user.id,
         {k: str(v) for k, v in changes.items()},

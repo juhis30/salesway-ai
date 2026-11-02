@@ -53,6 +53,7 @@ class UserOut(BaseModel):
     team_id: uuid.UUID | None
     territory_id: uuid.UUID | None
     is_active: bool
+    whatsapp_opt_in: bool = False
     created_at: datetime
 
 
@@ -78,3 +79,4 @@ class UserUpdate(BaseModel):
     team_id: uuid.UUID | None = None
     territory_id: uuid.UUID | None = None
     is_active: bool | None = None
+    whatsapp_opt_in: bool | None = None

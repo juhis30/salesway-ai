@@ -3,7 +3,7 @@
 // Tokens live in localStorage for this demo. Production should move the refresh token to an
 // httpOnly cookie so page scripts can't read it.
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
+export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
 const ACCESS_KEY = "sw_access";
 const REFRESH_KEY = "sw_refresh";
 export const LOGOUT_EVENT = "sw:logout";
@@ -452,6 +452,43 @@ export interface FollowUp {
   opportunity_name: string | null;
   salesperson_name: string | null;
   notes: string | null;
+}
+
+// --- Assistant & WhatsApp -------------------------------------------------------------------
+
+export interface ChatMessage {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  intent: string | null;
+  created_at: string;
+  based_on: {
+    intent: string | null;
+    scope: string | null;
+    period: [string, string] | null;
+    comparison: [string, string] | null;
+    data_as_of: string | null;
+    provider: string | null;
+    grounded: boolean;
+  } | null;
+  suggestions: string[];
+}
+
+export interface ConversationSummary {
+  id: string;
+  channel: "web" | "whatsapp";
+  title: string | null;
+  last_message_at: string;
+}
+
+export interface WhatsAppSettings {
+  provider: "mock" | "meta";
+  webhook_path: string;
+  verify_token_set: boolean;
+  app_secret_set: boolean;
+  access_token_set: boolean;
+  accounts: { id: string; phone_number_id: string; display_phone: string | null; enabled: boolean }[];
+  users: { id: string; full_name: string; role: Role; phone: string | null; whatsapp_opt_in: boolean }[];
 }
 
 export type ImportEntity = "customers" | "products" | "orders" | "targets" | "opportunities" | "activities";

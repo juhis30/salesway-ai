@@ -42,6 +42,16 @@ def growth_pct(current: Decimal, previous: Decimal) -> float | None:
     return round(float((current - previous) / previous * 100), 1)
 
 
+def straight_line_projection(actual: Decimal, days_elapsed: int, days_in_period: int) -> Decimal | None:
+    """Where the period ends if the pace so far continues: actual / days elapsed x days in period.
+
+    A simple pace estimate, not a forecast model (those come with the predictive engine).
+    """
+    if days_elapsed <= 0 or days_in_period <= 0:
+        return None
+    return (actual / days_elapsed * days_in_period).quantize(Decimal("0.01"))
+
+
 def required_daily_run_rate(gap: Decimal | None, days_remaining: int) -> Decimal | None:
     """Sales needed per remaining day to close the target gap."""
     if gap is None or gap <= 0 or days_remaining <= 0:

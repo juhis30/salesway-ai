@@ -1,3 +1,4 @@
+from app.models.assistant import Conversation, Message, WhatsAppAccount
 from app.models.core import AuditLog, Organization, Team, Territory, User
 from app.models.enums import (
     ADMIN_ROLES,
@@ -26,6 +27,9 @@ __all__ = [
     "OpportunityStage",
     "SalesActivity",
     "AuditLog",
+    "Conversation",
+    "Message",
+    "WhatsAppAccount",
     "Customer",
     "CustomerStatus",
     "ImportEntity",

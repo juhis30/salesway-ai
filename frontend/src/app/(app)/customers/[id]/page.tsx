@@ -247,7 +247,9 @@ function ProductsTable({ rows }: { rows: TopProduct[] }) {
 function OrderHistory({ customerId, start, end }: { customerId: string; start: string; end: string }) {
   const [offset, setOffset] = useState(0);
   const [open, setOpen] = useState<Set<string>>(new Set());
-  useEffect(() => setOffset(0), [start, end]);
+  useEffect(() => {
+    setOffset(0);
+  }, [start, end]);
 
   const orders = useApi<Page<Order>>(`/customers/${customerId}/orders`, { start, end, limit: 25, offset });
 

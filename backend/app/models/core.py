@@ -53,6 +53,10 @@ class User(IdMixin, TimestampMixin, TenantMixin, Base):
     )
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Consent to receive messages the user didn't ask for (daily briefings, alerts).
+    # Replies to the user's own WhatsApp questions don't need it.
+    whatsapp_opt_in: Mapped[bool] = mapped_column(Boolean, default=False, server_default="0")
+    whatsapp_opt_in_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
     team: Mapped[Team | None] = relationship()
     territory: Mapped[Territory | None] = relationship()

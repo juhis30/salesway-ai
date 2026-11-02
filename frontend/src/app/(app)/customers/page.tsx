@@ -12,7 +12,9 @@ export default function CustomersPage() {
   const [offset, setOffset] = useState(0);
   const debouncedSearch = useDebounced(search);
 
-  useEffect(() => setOffset(0), [debouncedSearch, segment]);
+  useEffect(() => {
+    setOffset(0);
+  }, [debouncedSearch, segment]);
 
   const customers = useApi<Page<Customer>>("/customers", { search: debouncedSearch, segment, limit: PAGE_SIZE, offset });
   const segments = useApi<string[]>("/customers/segments");
