@@ -1,5 +1,6 @@
 from functools import lru_cache
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 DEFAULT_JWT_SECRET = "dev-only-insecure-secret-change-me"
@@ -13,8 +14,17 @@ class Settings(BaseSettings):
     app_name: str = "SaleSway AI"
     environment: str = "development"
 
-    # SQLite for the local demo; switch to postgresql+psycopg://... without code changes.
+    # SQLite for the local demo. A Postgres URL as hosts give it (postgres://... or
+    # postgresql://..., e.g. from Neon) is used as-is with the psycopg driver.
     database_url: str = "sqlite:///./salesway.db"
+
+    @field_validator("database_url")
+    @classmethod
+    def use_psycopg_driver(cls, value: str) -> str:
+        for prefix in ("postgres://", "postgresql://"):
+            if value.startswith(prefix):
+                return "postgresql+psycopg://" + value[len(prefix):]
+        return value
 
     jwt_secret: str = DEFAULT_JWT_SECRET
     jwt_algorithm: str = "HS256"

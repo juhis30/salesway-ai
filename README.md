@@ -5,6 +5,8 @@ analytics, and ask questions in plain language on the web or WhatsApp.
 
 > **Status: Phases 1–4 complete: analytics, web dashboard, AI assistant (web + WhatsApp) and predictive models.** See [docs/plan.md](docs/plan.md), [docs/assistant.md](docs/assistant.md) and [docs/predictions.md](docs/predictions.md).
 
+**Live demo:** https://salesway-web.onrender.com (free hosting: the first visit after a quiet spell takes about a minute to wake up). Demo logins below. Hosting details: [docs/deployment.md](docs/deployment.md).
+
 ## Run it locally (Windows, no Docker)
 
 Requires Python 3.12+ and Node.js 18+. Run the backend and frontend in two terminals.

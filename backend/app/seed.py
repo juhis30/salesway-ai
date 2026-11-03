@@ -24,7 +24,7 @@ from app.analytics.periods import add_months, month_start, org_today
 from app.core.database import SessionLocal
 from app.core.security import hash_password
 from app.ml.train import train_organization
-from app.models import ImportEntity, Organization, Role, Team, Territory, User
+from app.models import ImportEntity, Organization, Role, SalesOrder, Team, Territory, User
 from app.services import importer
 
 ORG_NAME = "Shakti Distributors Pvt Ltd (Demo)"
@@ -413,6 +413,8 @@ def seed(reset: bool = False) -> None:
             print(f"'{ORG_NAME}' already exists. Use --reset to recreate it.")
             return
         if existing:
+            # Orders first: customers and products refuse deletion while orders still point at them.
+            db.execute(delete(SalesOrder).where(SalesOrder.organization_id == existing.id))
             db.execute(delete(Organization).where(Organization.id == existing.id))
             db.commit()
             print("Deleted existing demo organisation.")

@@ -1,141 +1,141 @@
 opportunity_id,opportunity_name,customer_code,owner_email,stage,deal_value,created_date,close_date,closed_date,lead_source,lost_reason
-OPP-0001,Mehta Hypermarket (New) – Bulk edible oil order,P010,gurpreet@shakti-demo.in,won,1500000,2025-12-25,2026-03-16,2026-03-07,Trade show,
-OPP-0002,Mittal Hypermarket – Shelf-space expansion,C0015,pooja@shakti-demo.in,won,1200000,2026-03-22,2026-06-17,2026-04-21,Referral,
-OPP-0003,Mittal Hypermarket – Shelf-space expansion,C0015,pooja@shakti-demo.in,won,300000,2026-05-18,2026-08-08,2026-07-01,Trade show,
-OPP-0004,Mehta Distributors – Annual supply contract,C0040,harleen@shakti-demo.in,lost,500000,2026-02-22,2026-04-15,2026-03-23,Field visit,No response
-OPP-0005,Arora Distributors – New SKU listing,C0019,pooja@shakti-demo.in,won,1500000,2026-08-17,2026-11-02,2026-10-12,Inbound call,
-OPP-0006,Mehta Traders – New SKU listing,C0077,kavya@shakti-demo.in,won,1200000,2026-01-27,2026-03-26,2026-02-14,Trade show,
-OPP-0007,Arora Traders – Shelf-space expansion,C0072,aditya@shakti-demo.in,won,600000,2025-11-17,2026-01-03,2026-01-11,Inbound call,
-OPP-0008,Kulkarni Distributors – Shelf-space expansion,C0039,harleen@shakti-demo.in,proposal,800000,2026-09-12,2026-12-11,,Trade show,
-OPP-0009,Jain Foods – Bulk edible oil order,C0063,kavya@shakti-demo.in,negotiation,150000,2026-10-04,2026-11-03,,Referral,
-OPP-0010,Joshi Supermart – Festive season stock-up,C0027,gurpreet@shakti-demo.in,lost,1000000,2025-12-06,2026-02-28,2026-02-19,Field visit,Price too high
-OPP-0011,Shah Hypermarket – New SKU listing,C0044,rohan@shakti-demo.in,prospecting,400000,2026-09-10,2026-11-26,,Field visit,
-OPP-0012,Shah Dhaba (New) – Bulk edible oil order,P003,rohan@shakti-demo.in,lost,800000,2026-09-16,2026-11-21,2026-11-02,Inbound call,No response
-OPP-0013,Jain Restaurant – Festive season stock-up,C0066,kavya@shakti-demo.in,won,1500000,2026-08-06,2026-10-24,2026-10-08,Field visit,
-OPP-0014,Jain Restaurant – New SKU listing,C0066,kavya@shakti-demo.in,lost,1200000,2025-11-22,2026-02-02,2025-12-17,Inbound call,No response
-OPP-0015,Chopra Caterers – Private-label staples,C0021,gurpreet@shakti-demo.in,prospecting,1200000,2026-09-14,2026-11-15,,Trade show,
-OPP-0016,Mehta Enterprises – Bulk edible oil order,C0078,aditya@shakti-demo.in,won,500000,2025-11-19,2026-01-11,2025-12-15,Inbound call,
-OPP-0017,Mehta Hypermarket (New) – Shelf-space expansion,P010,gurpreet@shakti-demo.in,lost,2000000,2025-11-01,2025-12-16,2025-12-11,Field visit,Price too high
-OPP-0018,Naik Foods – Annual supply contract,C0007,amit@shakti-demo.in,won,1000000,2026-03-05,2026-05-15,2026-04-13,Referral,
-OPP-0019,Jain Foods – Private-label staples,C0063,kavya@shakti-demo.in,won,1000000,2026-02-10,2026-03-24,2026-04-26,Referral,
-OPP-0020,Chopra Restaurant (New) – Annual supply contract,P006,harleen@shakti-demo.in,won,200000,2025-12-16,2026-02-11,2026-01-26,Field visit,
-OPP-0021,Deshmukh Distributors – New SKU listing,C0042,sneha@shakti-demo.in,lost,400000,2026-06-18,2026-09-14,2026-07-26,Inbound call,Credit terms
-OPP-0022,Chopra Enterprises – New SKU listing,C0025,harleen@shakti-demo.in,lost,300000,2025-11-16,2026-01-01,2025-12-18,Referral,Budget frozen
-OPP-0023,Arora Traders – Private-label staples,C0072,aditya@shakti-demo.in,lost,1000000,2026-03-23,2026-05-16,2026-06-03,Referral,No response
-OPP-0024,Deshmukh Traders – New SKU listing,C0032,harleen@shakti-demo.in,qualification,1500000,2026-10-14,2027-01-08,,Trade show,
-OPP-0025,Joshi Restaurant – Private-label staples,C0023,gurpreet@shakti-demo.in,won,600000,2025-11-01,2026-01-08,2026-01-11,Field visit,
-OPP-0026,Deshmukh Distributors – Annual supply contract,C0042,sneha@shakti-demo.in,negotiation,1000000,2026-10-14,2026-12-10,,Field visit,
-OPP-0027,Kulkarni Supermart – Annual supply contract,C0071,kavya@shakti-demo.in,won,1500000,2025-11-26,2026-01-27,2025-12-13,Trade show,
-OPP-0028,Jain Fresh Mart (New) – Private-label staples,P011,sneha@shakti-demo.in,lost,1500000,2026-01-14,2026-03-17,2026-02-14,Referral,No response
-OPP-0029,Arora Traders – Shelf-space expansion,C0072,aditya@shakti-demo.in,won,150000,2026-01-01,2026-03-19,2026-01-16,Inbound call,
-OPP-0030,Joshi Restaurant – Bulk edible oil order,C0023,gurpreet@shakti-demo.in,lost,500000,2026-05-17,2026-07-07,2026-07-22,Field visit,Credit terms
-OPP-0031,Mehta Traders – New SKU listing,C0077,kavya@shakti-demo.in,lost,300000,2026-09-28,2026-12-06,2026-11-02,Referral,Chose competitor
-OPP-0032,Chopra Caterers – Annual supply contract,C0021,gurpreet@shakti-demo.in,lost,400000,2026-02-15,2026-05-15,2026-03-06,Trade show,Credit terms
-OPP-0033,Jain Fresh Mart (New) – Shelf-space expansion,P011,sneha@shakti-demo.in,won,1000000,2026-03-30,2026-06-11,2026-06-06,Field visit,
-OPP-0034,Shah Hypermarket – Annual supply contract,C0044,rohan@shakti-demo.in,won,300000,2026-06-11,2026-07-11,2026-06-30,Trade show,
-OPP-0035,Deshmukh Distributors (New) – Annual supply contract,P007,sneha@shakti-demo.in,lost,250000,2026-03-23,2026-04-28,2026-04-08,Field visit,Credit terms
-OPP-0036,Deshmukh Fresh Mart – Shelf-space expansion,C0028,gurpreet@shakti-demo.in,won,1500000,2026-03-22,2026-04-24,2026-04-25,Trade show,
-OPP-0037,Kulkarni Wholesale – New SKU listing,C0011,amit@shakti-demo.in,lost,800000,2026-04-05,2026-05-25,2026-06-10,Inbound call,Chose competitor
-OPP-0038,Malhotra Supermart – New SKU listing,C0055,rohan@shakti-demo.in,won,1000000,2026-06-26,2026-09-20,2026-08-14,Referral,
-OPP-0039,Shah Foods (New) – New SKU listing,P012,aditya@shakti-demo.in,qualification,300000,2026-10-02,2026-11-23,,Inbound call,
-OPP-0040,Joshi Restaurant – Private-label staples,C0023,gurpreet@shakti-demo.in,lost,400000,2026-02-28,2026-04-05,2026-04-21,Inbound call,No response
-OPP-0041,Joshi Supermart – Bulk edible oil order,C0027,gurpreet@shakti-demo.in,won,2000000,2026-08-11,2026-10-16,2026-10-19,Trade show,
-OPP-0042,Gupta Foods – Annual supply contract,C0076,aditya@shakti-demo.in,lost,250000,2026-01-05,2026-02-07,2026-03-01,Field visit,Chose competitor
-OPP-0043,Mittal Dhaba – Bulk edible oil order,C0062,aditya@shakti-demo.in,won,200000,2026-02-19,2026-05-01,2026-04-26,Inbound call,
-OPP-0044,Kulkarni Distributors – Festive season stock-up,C0039,harleen@shakti-demo.in,lost,2500000,2026-06-26,2026-09-03,2026-08-15,Referral,Budget frozen
-OPP-0045,Chopra Caterers – Bulk edible oil order,C0021,gurpreet@shakti-demo.in,won,2500000,2025-11-14,2026-02-06,2025-12-01,Field visit,
-OPP-0046,Mittal Dhaba – Festive season stock-up,C0062,aditya@shakti-demo.in,lost,400000,2026-07-28,2026-09-13,2026-09-07,Referral,Budget frozen
-OPP-0047,Jain Supermart (New) – Bulk edible oil order,P001,amit@shakti-demo.in,won,150000,2026-07-06,2026-09-17,2026-08-14,Field visit,
-OPP-0048,Chopra Caterers – Annual supply contract,C0021,gurpreet@shakti-demo.in,won,150000,2026-03-26,2026-05-15,2026-04-21,Trade show,
-OPP-0049,Sharma Traders – Bulk edible oil order,C0014,amit@shakti-demo.in,prospecting,800000,2026-09-23,2026-12-16,,Trade show,
-OPP-0050,Agarwal Supermart – New SKU listing,C0004,amit@shakti-demo.in,lost,300000,2026-06-01,2026-08-28,2026-07-19,Field visit,Chose competitor
-OPP-0051,Kulkarni Wholesale – Private-label staples,C0011,amit@shakti-demo.in,won,250000,2026-05-07,2026-07-25,2026-06-26,Trade show,
-OPP-0052,Mittal Hypermarket – Festive season stock-up,C0015,pooja@shakti-demo.in,won,1000000,2026-03-10,2026-04-28,2026-05-03,Trade show,
-OPP-0053,Shah Hypermarket – Festive season stock-up,C0044,rohan@shakti-demo.in,won,400000,2026-05-21,2026-07-23,2026-06-29,Trade show,
-OPP-0054,Arora Hypermarket (New) – New SKU listing,P008,kavya@shakti-demo.in,lost,2500000,2026-02-21,2026-05-12,2026-04-09,Field visit,Credit terms
-OPP-0055,Shah Foods (New) – Bulk edible oil order,P012,aditya@shakti-demo.in,won,250000,2026-07-23,2026-08-29,2026-09-16,Trade show,
-OPP-0056,Agarwal Supermart – Bulk edible oil order,C0004,amit@shakti-demo.in,won,2000000,2026-07-28,2026-09-22,2026-09-12,Referral,
-OPP-0057,Joshi Restaurant – Annual supply contract,C0023,gurpreet@shakti-demo.in,qualification,2500000,2026-10-16,2027-01-08,,Referral,
-OPP-0058,Mittal Dhaba – Festive season stock-up,C0062,aditya@shakti-demo.in,negotiation,300000,2026-10-07,2026-11-13,,Inbound call,
-OPP-0059,Chopra Caterers – Annual supply contract,C0021,gurpreet@shakti-demo.in,won,800000,2026-07-17,2026-08-27,2026-08-24,Field visit,
-OPP-0060,Jain Wholesale – Shelf-space expansion,C0065,aditya@shakti-demo.in,won,150000,2026-07-31,2026-09-28,2026-10-11,Referral,
-OPP-0061,Goyal Distributors (New) – Annual supply contract,P005,amit@shakti-demo.in,lost,150000,2026-05-07,2026-06-15,2026-06-24,Referral,Price too high
-OPP-0062,Sethi Distributors (New) – Festive season stock-up,P004,kavya@shakti-demo.in,won,500000,2026-09-13,2026-11-15,2026-10-21,Inbound call,
-OPP-0063,Mehta Wholesale – New SKU listing,C0034,gurpreet@shakti-demo.in,lost,800000,2026-01-03,2026-02-03,2026-02-01,Referral,No response
-OPP-0064,Mehta Wholesale – Bulk edible oil order,C0034,gurpreet@shakti-demo.in,lost,500000,2026-05-19,2026-08-16,2026-06-20,Referral,Budget frozen
-OPP-0065,Jain Wholesale – Festive season stock-up,C0065,aditya@shakti-demo.in,won,300000,2025-11-21,2025-12-31,2026-01-06,Field visit,
-OPP-0066,Patel Fresh Mart – Bulk edible oil order,C0005,pooja@shakti-demo.in,lost,1000000,2025-12-26,2026-02-26,2026-03-04,Referral,Chose competitor
-OPP-0067,Mehta Restaurant – Annual supply contract,C0061,kavya@shakti-demo.in,lost,250000,2026-09-19,2026-11-21,2026-11-02,Inbound call,Price too high
-OPP-0068,Deshmukh Distributors (New) – Annual supply contract,P007,sneha@shakti-demo.in,proposal,1200000,2026-10-28,2026-12-13,,Trade show,
-OPP-0069,Arora Traders – Festive season stock-up,C0072,aditya@shakti-demo.in,won,400000,2026-05-14,2026-07-03,2026-06-01,Referral,
-OPP-0070,Patel Fresh Mart – Annual supply contract,C0005,pooja@shakti-demo.in,lost,1500000,2025-12-18,2026-02-07,2026-01-19,Field visit,Credit terms
-OPP-0071,Sethi Fresh Mart – Festive season stock-up,C0074,kavya@shakti-demo.in,lost,200000,2025-11-15,2026-01-13,2025-12-08,Field visit,Credit terms
-OPP-0072,Jain Fresh Mart (New) – Festive season stock-up,P011,sneha@shakti-demo.in,lost,250000,2026-03-05,2026-05-28,2026-03-20,Referral,Credit terms
-OPP-0073,Mehta Hypermarket (New) – Festive season stock-up,P010,gurpreet@shakti-demo.in,lost,600000,2026-04-28,2026-07-21,2026-07-10,Inbound call,No response
-OPP-0074,Goyal Distributors (New) – Annual supply contract,P005,amit@shakti-demo.in,won,1200000,2025-11-01,2025-12-27,2025-12-20,Referral,
-OPP-0075,Deshmukh Fresh Mart – Annual supply contract,C0028,gurpreet@shakti-demo.in,qualification,1200000,2026-10-13,2026-12-05,,Inbound call,
-OPP-0076,Mehta Hypermarket – Annual supply contract,C0060,sneha@shakti-demo.in,lost,250000,2026-07-13,2026-09-19,2026-08-18,Referral,No response
-OPP-0077,Jain Fresh Mart (New) – Private-label staples,P011,sneha@shakti-demo.in,lost,250000,2025-11-03,2026-01-23,2025-12-11,Field visit,Budget frozen
-OPP-0078,Naik Foods – Bulk edible oil order,C0007,amit@shakti-demo.in,won,250000,2026-03-29,2026-05-02,2026-05-04,Referral,
-OPP-0079,Mittal Hypermarket – Private-label staples,C0015,pooja@shakti-demo.in,lost,500000,2025-11-02,2025-12-25,2026-01-07,Field visit,No response
-OPP-0080,Kulkarni Foods – Private-label staples,C0051,rohan@shakti-demo.in,lost,1500000,2026-06-25,2026-09-13,2026-08-11,Field visit,No response
-OPP-0081,Joshi Restaurant – Shelf-space expansion,C0023,gurpreet@shakti-demo.in,won,250000,2026-02-18,2026-04-26,2026-04-15,Field visit,
-OPP-0082,Jain Wholesale – Festive season stock-up,C0065,aditya@shakti-demo.in,lost,800000,2025-11-28,2026-01-25,2025-12-29,Inbound call,Chose competitor
-OPP-0083,Jain Supermart (New) – Private-label staples,P001,amit@shakti-demo.in,lost,400000,2026-05-29,2026-07-16,2026-07-05,Trade show,Price too high
-OPP-0084,Kulkarni Foods – Bulk edible oil order,C0051,rohan@shakti-demo.in,won,2500000,2026-01-06,2026-02-27,2026-03-16,Trade show,
-OPP-0085,Sethi Hypermarket – Annual supply contract,C0079,kavya@shakti-demo.in,qualification,1200000,2026-09-21,2026-11-06,,Trade show,
-OPP-0086,Deshmukh Distributors – Private-label staples,C0042,sneha@shakti-demo.in,lost,300000,2025-12-16,2026-03-01,2026-02-19,Field visit,Price too high
-OPP-0087,Agarwal Supermart – Shelf-space expansion,C0004,amit@shakti-demo.in,qualification,600000,2026-09-08,2026-10-31,,Inbound call,
-OPP-0088,Mehta Wholesale – Shelf-space expansion,C0034,gurpreet@shakti-demo.in,won,200000,2026-01-09,2026-04-08,2026-03-07,Inbound call,
-OPP-0089,Shah Foods (New) – Festive season stock-up,P012,aditya@shakti-demo.in,won,800000,2026-05-22,2026-06-23,2026-07-25,Trade show,
-OPP-0090,Sethi Hypermarket – Bulk edible oil order,C0079,kavya@shakti-demo.in,lost,1000000,2026-04-26,2026-07-15,2026-05-19,Inbound call,Chose competitor
-OPP-0091,Arora Traders – Festive season stock-up,C0072,aditya@shakti-demo.in,lost,1000000,2026-06-18,2026-08-23,2026-08-02,Referral,Budget frozen
-OPP-0092,Shah Dhaba (New) – Shelf-space expansion,P003,rohan@shakti-demo.in,won,2500000,2025-12-06,2026-03-06,2026-01-10,Referral,
-OPP-0093,Mittal Hypermarket – Annual supply contract,C0015,pooja@shakti-demo.in,lost,2500000,2026-01-02,2026-03-30,2026-02-15,Trade show,No response
-OPP-0094,Kulkarni Distributors – Shelf-space expansion,C0039,harleen@shakti-demo.in,lost,800000,2025-12-19,2026-01-24,2026-01-05,Field visit,Chose competitor
-OPP-0095,Arora Hypermarket (New) – Shelf-space expansion,P008,kavya@shakti-demo.in,qualification,2500000,2026-10-18,2026-12-19,,Trade show,
-OPP-0096,Jain Wholesale – Shelf-space expansion,C0065,aditya@shakti-demo.in,won,1200000,2026-02-08,2026-04-17,2026-02-25,Referral,
-OPP-0097,Goyal Distributors (New) – New SKU listing,P005,amit@shakti-demo.in,lost,500000,2026-06-27,2026-09-20,2026-08-27,Inbound call,Chose competitor
-OPP-0098,Arora Hypermarket (New) – Festive season stock-up,P008,kavya@shakti-demo.in,lost,250000,2026-01-02,2026-03-09,2026-02-07,Referral,Budget frozen
-OPP-0099,Kulkarni Distributors – Festive season stock-up,C0039,harleen@shakti-demo.in,lost,500000,2026-05-14,2026-06-22,2026-06-01,Referral,Budget frozen
-OPP-0100,Jain Wholesale – Annual supply contract,C0065,aditya@shakti-demo.in,lost,250000,2026-08-13,2026-09-12,2026-09-04,Inbound call,Chose competitor
-OPP-0101,Mehta Enterprises – New SKU listing,C0078,aditya@shakti-demo.in,won,400000,2026-03-06,2026-04-24,2026-05-02,Referral,
-OPP-0102,Jain Wholesale – Bulk edible oil order,C0065,aditya@shakti-demo.in,won,1200000,2025-11-23,2026-01-08,2026-01-06,Inbound call,
-OPP-0103,Deshmukh Traders – Annual supply contract,C0032,harleen@shakti-demo.in,lost,600000,2025-11-28,2026-01-21,2025-12-15,Field visit,Budget frozen
-OPP-0104,Deshmukh Fresh Mart – Annual supply contract,C0028,gurpreet@shakti-demo.in,won,2500000,2026-07-31,2026-09-09,2026-10-08,Referral,
-OPP-0105,Chopra Caterers – Bulk edible oil order,C0021,gurpreet@shakti-demo.in,won,1200000,2026-08-13,2026-10-31,2026-10-14,Field visit,
-OPP-0106,Mittal Dhaba – Shelf-space expansion,C0062,aditya@shakti-demo.in,lost,400000,2026-07-31,2026-10-08,2026-09-21,Trade show,Credit terms
-OPP-0107,Jain Supermart (New) – New SKU listing,P001,amit@shakti-demo.in,lost,500000,2026-06-10,2026-08-06,2026-07-07,Field visit,Budget frozen
-OPP-0108,Joshi Restaurant – Private-label staples,C0023,gurpreet@shakti-demo.in,prospecting,150000,2026-10-08,2026-12-08,,Field visit,
-OPP-0109,Jain Supermart (New) – Festive season stock-up,P001,amit@shakti-demo.in,lost,300000,2026-02-16,2026-04-25,2026-03-26,Field visit,Price too high
-OPP-0110,Arora Traders – New SKU listing,C0072,aditya@shakti-demo.in,lost,2000000,2026-06-08,2026-09-03,2026-08-17,Referral,Price too high
-OPP-0111,Goyal Distributors (New) – New SKU listing,P005,amit@shakti-demo.in,lost,2500000,2026-07-12,2026-08-18,2026-09-02,Referral,Credit terms
-OPP-0112,Shah Hypermarket – Private-label staples,C0044,rohan@shakti-demo.in,lost,250000,2026-02-21,2026-03-27,2026-04-30,Inbound call,No response
-OPP-0113,Malhotra Traders – Annual supply contract,C0050,sneha@shakti-demo.in,prospecting,200000,2026-09-17,2026-10-26,,Referral,
-OPP-0114,Mittal Dhaba – Annual supply contract,C0062,aditya@shakti-demo.in,lost,1000000,2026-07-23,2026-09-22,2026-08-08,Trade show,Price too high
-OPP-0115,Chopra Distributors (New) – Bulk edible oil order,P002,harleen@shakti-demo.in,lost,600000,2026-07-21,2026-09-01,2026-09-12,Trade show,Chose competitor
-OPP-0116,Sethi Hypermarket – Festive season stock-up,C0079,kavya@shakti-demo.in,lost,150000,2026-02-26,2026-03-28,2026-05-03,Field visit,Chose competitor
-OPP-0117,Kulkarni Traders – Bulk edible oil order,C0067,kavya@shakti-demo.in,won,1000000,2026-01-22,2026-02-28,2026-03-12,Trade show,
-OPP-0118,Kulkarni Wholesale – Annual supply contract,C0011,amit@shakti-demo.in,lost,400000,2026-03-16,2026-05-14,2026-05-16,Inbound call,Budget frozen
-OPP-0119,Chopra Restaurant (New) – Private-label staples,P006,harleen@shakti-demo.in,lost,800000,2026-05-10,2026-07-12,2026-07-13,Trade show,No response
-OPP-0120,Malhotra Traders – Bulk edible oil order,C0050,sneha@shakti-demo.in,lost,250000,2026-03-18,2026-05-31,2026-04-29,Field visit,Chose competitor
-OPP-0121,Patel Fresh Mart – Private-label staples,C0005,pooja@shakti-demo.in,lost,250000,2026-07-09,2026-09-05,2026-08-08,Trade show,Price too high
-OPP-0122,Chopra Enterprises – Annual supply contract,C0025,harleen@shakti-demo.in,lost,200000,2025-11-19,2026-01-03,2026-01-10,Trade show,Price too high
-OPP-0123,Jain Fresh Mart (New) – Festive season stock-up,P011,sneha@shakti-demo.in,lost,500000,2026-02-05,2026-03-08,2026-02-27,Inbound call,No response
-OPP-0124,Deshmukh Traders – Bulk edible oil order,C0032,harleen@shakti-demo.in,lost,2500000,2026-04-20,2026-05-25,2026-06-26,Trade show,Chose competitor
-OPP-0125,Agarwal Supermart – Private-label staples,C0004,amit@shakti-demo.in,lost,1200000,2026-08-14,2026-09-19,2026-09-06,Field visit,Chose competitor
-OPP-0126,Gupta Wholesale – Bulk edible oil order,C0049,sneha@shakti-demo.in,won,250000,2026-05-17,2026-07-05,2026-07-20,Referral,
-OPP-0127,Mehta Distributors – New SKU listing,C0040,harleen@shakti-demo.in,won,2500000,2026-01-25,2026-04-07,2026-03-27,Trade show,
-OPP-0128,Deshmukh Traders – Bulk edible oil order,C0032,harleen@shakti-demo.in,lost,2500000,2026-03-05,2026-04-29,2026-04-12,Inbound call,Chose competitor
-OPP-0129,Mehta Enterprises – New SKU listing,C0078,aditya@shakti-demo.in,lost,400000,2026-04-15,2026-07-09,2026-06-23,Field visit,Price too high
-OPP-0130,Gupta Wholesale – Private-label staples,C0049,sneha@shakti-demo.in,lost,800000,2026-03-04,2026-04-26,2026-04-02,Inbound call,Credit terms
-OPP-0131,Shah Dhaba (New) – New SKU listing,P003,rohan@shakti-demo.in,proposal,2000000,2026-09-17,2026-12-16,,Trade show,
-OPP-0132,Goyal Foods – Annual supply contract,C0053,rohan@shakti-demo.in,lost,250000,2026-05-13,2026-07-03,2026-06-12,Trade show,Budget frozen
-OPP-0133,Gupta Wholesale – New SKU listing,C0049,sneha@shakti-demo.in,prospecting,300000,2026-09-19,2026-11-07,,Inbound call,
-OPP-0134,Mittal Hypermarket – New SKU listing,C0015,pooja@shakti-demo.in,won,500000,2026-03-30,2026-06-11,2026-05-19,Trade show,
-OPP-0135,Chopra Distributors (New) – Private-label staples,P002,harleen@shakti-demo.in,won,300000,2026-05-26,2026-07-03,2026-07-16,Trade show,
-OPP-0136,Arora Hypermarket (New) – Annual supply contract,P008,kavya@shakti-demo.in,won,200000,2026-09-04,2026-11-22,2026-09-19,Field visit,
-OPP-0137,Mehta Hypermarket (New) – Bulk edible oil order,P010,gurpreet@shakti-demo.in,won,1500000,2025-11-17,2025-12-25,2025-12-05,Referral,
-OPP-0138,Kulkarni Wholesale – Annual supply contract,C0011,amit@shakti-demo.in,lost,150000,2026-06-13,2026-07-19,2026-08-05,Inbound call,Price too high
-OPP-0139,Arora Hypermarket (New) – New SKU listing,P008,kavya@shakti-demo.in,lost,1000000,2026-03-20,2026-06-08,2026-04-30,Referral,Budget frozen
-OPP-0140,Jain Supermart (New) – Shelf-space expansion,P001,amit@shakti-demo.in,won,1500000,2026-01-27,2026-02-27,2026-02-22,Field visit,
+OPP-0001,Deshmukh Fresh Mart – Private-label staples,C0028,gurpreet@shakti-demo.in,lost,600000,2026-08-13,2026-10-29,2026-09-16,Trade show,Price too high
+OPP-0002,Jain Wholesale – Festive season stock-up,C0065,aditya@shakti-demo.in,won,1200000,2026-04-30,2026-07-16,2026-06-13,Field visit,
+OPP-0003,Kulkarni Wholesale – Annual supply contract,C0011,amit@shakti-demo.in,lost,250000,2026-06-09,2026-08-30,2026-08-17,Field visit,Credit terms
+OPP-0004,Arora Traders – Bulk edible oil order,C0072,aditya@shakti-demo.in,lost,2000000,2026-08-07,2026-09-10,2026-09-30,Referral,Budget frozen
+OPP-0005,Mehta Restaurant – Festive season stock-up,C0061,kavya@shakti-demo.in,lost,1200000,2026-02-21,2026-05-22,2026-04-01,Trade show,Price too high
+OPP-0006,Deshmukh Fresh Mart – New SKU listing,C0028,gurpreet@shakti-demo.in,lost,2000000,2026-02-15,2026-03-27,2026-04-25,Referral,No response
+OPP-0007,Deshmukh Restaurant (New) – Shelf-space expansion,P008,kavya@shakti-demo.in,qualification,800000,2026-10-08,2026-12-25,,Referral,
+OPP-0008,Naik Dhaba (New) – Festive season stock-up,P001,amit@shakti-demo.in,won,500000,2025-11-29,2026-01-31,2025-12-31,Referral,
+OPP-0009,Joshi Supermart – New SKU listing,C0027,gurpreet@shakti-demo.in,won,400000,2025-12-15,2026-02-06,2026-02-21,Inbound call,
+OPP-0010,Mehta Restaurant – Private-label staples,C0061,kavya@shakti-demo.in,lost,1500000,2025-11-27,2026-01-07,2025-12-28,Inbound call,Budget frozen
+OPP-0011,Mehta Distributors – Bulk edible oil order,C0040,harleen@shakti-demo.in,lost,1000000,2026-07-23,2026-08-29,2026-08-30,Referral,Budget frozen
+OPP-0012,Malhotra Wholesale – Bulk edible oil order,C0057,rohan@shakti-demo.in,won,150000,2026-07-16,2026-09-07,2026-09-18,Field visit,
+OPP-0013,Deshmukh Hypermarket – Bulk edible oil order,C0030,gurpreet@shakti-demo.in,won,250000,2026-06-17,2026-09-05,2026-08-24,Field visit,
+OPP-0014,Mehta Wholesale – Bulk edible oil order,C0034,gurpreet@shakti-demo.in,lost,500000,2026-05-19,2026-08-16,2026-06-20,Referral,Budget frozen
+OPP-0015,Jain Wholesale – Festive season stock-up,C0065,aditya@shakti-demo.in,won,300000,2025-11-21,2025-12-31,2026-01-06,Field visit,
+OPP-0016,Patel Fresh Mart – Bulk edible oil order,C0005,pooja@shakti-demo.in,lost,1000000,2025-12-26,2026-02-26,2026-03-04,Referral,Chose competitor
+OPP-0017,Mehta Restaurant – Annual supply contract,C0061,kavya@shakti-demo.in,lost,250000,2026-09-19,2026-11-21,2026-11-03,Inbound call,Price too high
+OPP-0018,Mittal Wholesale (New) – Annual supply contract,P007,rohan@shakti-demo.in,proposal,1200000,2026-10-28,2026-12-13,,Trade show,
+OPP-0019,Arora Traders – Festive season stock-up,C0072,aditya@shakti-demo.in,won,400000,2026-05-14,2026-07-03,2026-06-01,Referral,
+OPP-0020,Patel Fresh Mart – Annual supply contract,C0005,pooja@shakti-demo.in,lost,1500000,2025-12-18,2026-02-07,2026-01-19,Field visit,Credit terms
+OPP-0021,Sethi Fresh Mart – Festive season stock-up,C0074,kavya@shakti-demo.in,lost,200000,2025-11-15,2026-01-13,2025-12-08,Field visit,Credit terms
+OPP-0022,Sethi Traders (New) – Festive season stock-up,P011,rohan@shakti-demo.in,lost,250000,2026-03-05,2026-05-28,2026-03-20,Referral,Credit terms
+OPP-0023,Mittal Caterers (New) – Festive season stock-up,P010,gurpreet@shakti-demo.in,lost,600000,2026-04-28,2026-07-21,2026-07-10,Inbound call,No response
+OPP-0024,Agarwal Dhaba (New) – Annual supply contract,P005,amit@shakti-demo.in,won,1200000,2025-11-01,2025-12-27,2025-12-20,Referral,
+OPP-0025,Deshmukh Fresh Mart – Annual supply contract,C0028,gurpreet@shakti-demo.in,qualification,1200000,2026-10-13,2026-12-05,,Inbound call,
+OPP-0026,Mehta Hypermarket – Annual supply contract,C0060,sneha@shakti-demo.in,lost,250000,2026-07-13,2026-09-19,2026-08-18,Referral,No response
+OPP-0027,Sethi Traders (New) – Private-label staples,P011,rohan@shakti-demo.in,lost,250000,2025-11-03,2026-01-23,2025-12-11,Field visit,Budget frozen
+OPP-0028,Naik Foods – Bulk edible oil order,C0007,amit@shakti-demo.in,won,250000,2026-03-29,2026-05-02,2026-05-04,Referral,
+OPP-0029,Mittal Hypermarket – Private-label staples,C0015,pooja@shakti-demo.in,lost,500000,2025-11-02,2025-12-25,2026-01-07,Field visit,No response
+OPP-0030,Kulkarni Foods – Private-label staples,C0051,rohan@shakti-demo.in,lost,1500000,2026-06-25,2026-09-13,2026-08-11,Field visit,No response
+OPP-0031,Joshi Restaurant – Shelf-space expansion,C0023,gurpreet@shakti-demo.in,won,250000,2026-02-18,2026-04-26,2026-04-15,Field visit,
+OPP-0032,Jain Wholesale – Festive season stock-up,C0065,aditya@shakti-demo.in,lost,800000,2025-11-28,2026-01-25,2025-12-29,Inbound call,Chose competitor
+OPP-0033,Naik Dhaba (New) – Private-label staples,P001,amit@shakti-demo.in,lost,400000,2026-05-29,2026-07-16,2026-07-05,Trade show,Price too high
+OPP-0034,Kulkarni Foods – Bulk edible oil order,C0051,rohan@shakti-demo.in,won,2500000,2026-01-06,2026-02-27,2026-03-16,Trade show,
+OPP-0035,Sethi Hypermarket – Annual supply contract,C0079,kavya@shakti-demo.in,qualification,1200000,2026-09-21,2026-11-06,,Trade show,
+OPP-0036,Deshmukh Distributors – Private-label staples,C0042,sneha@shakti-demo.in,lost,300000,2025-12-16,2026-03-01,2026-02-19,Field visit,Price too high
+OPP-0037,Agarwal Supermart – Shelf-space expansion,C0004,amit@shakti-demo.in,qualification,600000,2026-09-08,2026-10-31,,Inbound call,
+OPP-0038,Mehta Wholesale – Shelf-space expansion,C0034,gurpreet@shakti-demo.in,won,200000,2026-01-09,2026-04-08,2026-03-07,Inbound call,
+OPP-0039,Agarwal Hypermarket (New) – Festive season stock-up,P012,kavya@shakti-demo.in,won,800000,2026-05-22,2026-06-23,2026-07-25,Trade show,
+OPP-0040,Sethi Hypermarket – Bulk edible oil order,C0079,kavya@shakti-demo.in,lost,1000000,2026-04-26,2026-07-15,2026-05-19,Inbound call,Chose competitor
+OPP-0041,Arora Traders – Festive season stock-up,C0072,aditya@shakti-demo.in,lost,1000000,2026-06-18,2026-08-23,2026-08-02,Referral,Budget frozen
+OPP-0042,Malhotra Foods (New) – Shelf-space expansion,P003,rohan@shakti-demo.in,won,2500000,2025-12-06,2026-03-06,2026-01-10,Referral,
+OPP-0043,Mittal Hypermarket – Annual supply contract,C0015,pooja@shakti-demo.in,lost,2500000,2026-01-02,2026-03-30,2026-02-15,Trade show,No response
+OPP-0044,Kulkarni Distributors – Shelf-space expansion,C0039,harleen@shakti-demo.in,lost,800000,2025-12-19,2026-01-24,2026-01-05,Field visit,Chose competitor
+OPP-0045,Deshmukh Restaurant (New) – Shelf-space expansion,P008,kavya@shakti-demo.in,qualification,2500000,2026-10-18,2026-12-19,,Trade show,
+OPP-0046,Gupta Foods – Private-label staples,C0076,aditya@shakti-demo.in,won,250000,2026-08-29,2026-10-05,2026-09-17,Inbound call,
+OPP-0047,Mehta Restaurant – New SKU listing,C0061,kavya@shakti-demo.in,lost,500000,2026-06-27,2026-09-20,2026-08-27,Inbound call,Chose competitor
+OPP-0048,Deshmukh Restaurant (New) – Festive season stock-up,P008,kavya@shakti-demo.in,lost,250000,2026-01-02,2026-03-09,2026-02-07,Referral,Budget frozen
+OPP-0049,Kulkarni Distributors – Festive season stock-up,C0039,harleen@shakti-demo.in,lost,500000,2026-05-14,2026-06-22,2026-06-01,Referral,Budget frozen
+OPP-0050,Jain Wholesale – Annual supply contract,C0065,aditya@shakti-demo.in,lost,250000,2026-08-13,2026-09-12,2026-09-04,Inbound call,Chose competitor
+OPP-0051,Mehta Enterprises – New SKU listing,C0078,aditya@shakti-demo.in,won,400000,2026-03-06,2026-04-24,2026-05-02,Referral,
+OPP-0052,Jain Wholesale – Bulk edible oil order,C0065,aditya@shakti-demo.in,won,1200000,2025-11-23,2026-01-08,2026-01-06,Inbound call,
+OPP-0053,Deshmukh Traders – Annual supply contract,C0032,harleen@shakti-demo.in,lost,600000,2025-11-28,2026-01-21,2025-12-15,Field visit,Budget frozen
+OPP-0054,Deshmukh Fresh Mart – Annual supply contract,C0028,gurpreet@shakti-demo.in,won,2500000,2026-07-31,2026-09-09,2026-10-08,Referral,
+OPP-0055,Chopra Caterers – Bulk edible oil order,C0021,gurpreet@shakti-demo.in,won,1200000,2026-08-13,2026-10-31,2026-10-14,Field visit,
+OPP-0056,Mittal Dhaba – Shelf-space expansion,C0062,aditya@shakti-demo.in,lost,400000,2026-07-31,2026-10-08,2026-09-21,Trade show,Credit terms
+OPP-0057,Naik Dhaba (New) – New SKU listing,P001,amit@shakti-demo.in,lost,500000,2026-06-10,2026-08-06,2026-07-07,Field visit,Budget frozen
+OPP-0058,Joshi Restaurant – Private-label staples,C0023,gurpreet@shakti-demo.in,won,150000,2026-10-08,2026-12-08,2026-10-31,Field visit,
+OPP-0059,Gupta Foods – Festive season stock-up,C0076,aditya@shakti-demo.in,won,250000,2026-02-27,2026-05-25,2026-04-26,Referral,
+OPP-0060,Agarwal Hypermarket (New) – New SKU listing,P012,kavya@shakti-demo.in,won,150000,2026-09-27,2026-12-12,2026-11-03,Trade show,
+OPP-0061,Agarwal Supermart – Private-label staples,C0004,amit@shakti-demo.in,lost,300000,2026-04-10,2026-07-09,2026-06-24,Trade show,No response
+OPP-0062,Agarwal Hypermarket (New) – Festive season stock-up,P012,kavya@shakti-demo.in,won,1200000,2026-06-17,2026-09-02,2026-07-16,Inbound call,
+OPP-0063,Mehta Wholesale (New) – Private-label staples,P002,harleen@shakti-demo.in,lost,400000,2026-03-10,2026-05-25,2026-05-11,Trade show,Price too high
+OPP-0064,Agarwal Supermart – Annual supply contract,C0004,amit@shakti-demo.in,won,800000,2025-11-26,2026-01-17,2026-01-31,Trade show,
+OPP-0065,Gupta Foods – Shelf-space expansion,C0076,aditya@shakti-demo.in,qualification,250000,2026-10-15,2027-01-04,,Referral,
+OPP-0066,Sharma Enterprises – Festive season stock-up,C0001,amit@shakti-demo.in,lost,800000,2025-11-09,2026-02-05,2026-01-06,Field visit,Chose competitor
+OPP-0067,Mittal Wholesale (New) – Festive season stock-up,P007,rohan@shakti-demo.in,won,250000,2026-02-25,2026-04-30,2026-04-14,Referral,
+OPP-0068,Chopra Enterprises – Private-label staples,C0025,harleen@shakti-demo.in,lost,400000,2025-12-11,2026-03-03,2026-02-01,Inbound call,Chose competitor
+OPP-0069,Mehta Traders – Private-label staples,C0077,kavya@shakti-demo.in,lost,500000,2026-07-12,2026-09-27,2026-08-26,Trade show,No response
+OPP-0070,Joshi Wholesale – Shelf-space expansion,C0006,pooja@shakti-demo.in,qualification,1200000,2026-09-09,2026-11-15,,Field visit,
+OPP-0071,Mehta Hypermarket – Private-label staples,C0060,sneha@shakti-demo.in,lost,300000,2026-01-06,2026-03-27,2026-03-04,Trade show,Credit terms
+OPP-0072,Chopra Enterprises – Annual supply contract,C0025,harleen@shakti-demo.in,lost,200000,2025-11-19,2026-01-03,2026-01-10,Trade show,Price too high
+OPP-0073,Sethi Traders (New) – Festive season stock-up,P011,rohan@shakti-demo.in,lost,500000,2026-02-05,2026-03-08,2026-02-27,Inbound call,No response
+OPP-0074,Deshmukh Traders – Bulk edible oil order,C0032,harleen@shakti-demo.in,lost,2500000,2026-04-20,2026-05-25,2026-06-26,Trade show,Chose competitor
+OPP-0075,Agarwal Supermart – Private-label staples,C0004,amit@shakti-demo.in,lost,1200000,2026-08-14,2026-09-19,2026-09-06,Field visit,Chose competitor
+OPP-0076,Gupta Wholesale – Bulk edible oil order,C0049,sneha@shakti-demo.in,won,250000,2026-05-17,2026-07-05,2026-07-20,Referral,
+OPP-0077,Mehta Distributors – New SKU listing,C0040,harleen@shakti-demo.in,won,2500000,2026-01-25,2026-04-07,2026-03-27,Trade show,
+OPP-0078,Deshmukh Traders – Bulk edible oil order,C0032,harleen@shakti-demo.in,lost,2500000,2026-03-05,2026-04-29,2026-04-12,Inbound call,Chose competitor
+OPP-0079,Mehta Enterprises – New SKU listing,C0078,aditya@shakti-demo.in,lost,400000,2026-04-15,2026-07-09,2026-06-23,Field visit,Price too high
+OPP-0080,Gupta Wholesale – Private-label staples,C0049,sneha@shakti-demo.in,lost,800000,2026-03-04,2026-04-26,2026-04-02,Inbound call,Credit terms
+OPP-0081,Malhotra Foods (New) – New SKU listing,P003,rohan@shakti-demo.in,proposal,2000000,2026-09-17,2026-12-16,,Trade show,
+OPP-0082,Goyal Foods – Annual supply contract,C0053,rohan@shakti-demo.in,lost,250000,2026-05-13,2026-07-03,2026-06-12,Trade show,Budget frozen
+OPP-0083,Gupta Wholesale – New SKU listing,C0049,sneha@shakti-demo.in,prospecting,300000,2026-09-19,2026-11-07,,Inbound call,
+OPP-0084,Mittal Hypermarket – New SKU listing,C0015,pooja@shakti-demo.in,won,500000,2026-03-30,2026-06-11,2026-05-19,Trade show,
+OPP-0085,Mehta Wholesale (New) – Private-label staples,P002,harleen@shakti-demo.in,won,300000,2026-05-26,2026-07-03,2026-07-16,Trade show,
+OPP-0086,Deshmukh Restaurant (New) – Annual supply contract,P008,kavya@shakti-demo.in,won,200000,2026-09-04,2026-11-22,2026-09-19,Field visit,
+OPP-0087,Mittal Caterers (New) – Bulk edible oil order,P010,gurpreet@shakti-demo.in,won,1500000,2025-11-17,2025-12-25,2025-12-05,Referral,
+OPP-0088,Kulkarni Wholesale – Annual supply contract,C0011,amit@shakti-demo.in,lost,150000,2026-06-13,2026-07-19,2026-08-05,Inbound call,Price too high
+OPP-0089,Deshmukh Restaurant (New) – New SKU listing,P008,kavya@shakti-demo.in,lost,1000000,2026-03-20,2026-06-08,2026-04-30,Referral,Budget frozen
+OPP-0090,Naik Dhaba (New) – Shelf-space expansion,P001,amit@shakti-demo.in,won,1500000,2026-01-27,2026-02-27,2026-02-22,Field visit,
+OPP-0091,Arora Traders – New SKU listing,C0072,aditya@shakti-demo.in,lost,1000000,2026-04-20,2026-06-01,2026-05-05,Trade show,Price too high
+OPP-0092,Patel Fresh Mart – Festive season stock-up,C0005,pooja@shakti-demo.in,lost,800000,2026-05-26,2026-07-14,2026-07-04,Field visit,No response
+OPP-0093,Mittal Wholesale (New) – Festive season stock-up,P007,rohan@shakti-demo.in,prospecting,400000,2026-09-20,2026-12-08,,Inbound call,
+OPP-0094,Kulkarni Distributors – Shelf-space expansion,C0039,harleen@shakti-demo.in,proposal,1500000,2026-10-23,2026-12-26,,Referral,
+OPP-0095,Jain Wholesale – New SKU listing,C0065,aditya@shakti-demo.in,won,500000,2026-03-29,2026-05-23,2026-06-11,Referral,
+OPP-0096,Shah Hypermarket – Private-label staples,C0044,rohan@shakti-demo.in,won,1000000,2026-06-09,2026-08-31,2026-07-08,Field visit,
+OPP-0097,Goyal Foods – Bulk edible oil order,C0053,rohan@shakti-demo.in,lost,400000,2026-07-27,2026-10-10,2026-08-25,Field visit,Credit terms
+OPP-0098,Naik Foods – Private-label staples,C0007,amit@shakti-demo.in,won,1000000,2026-07-27,2026-10-24,2026-09-01,Referral,
+OPP-0099,Chopra Caterers – Private-label staples,C0021,gurpreet@shakti-demo.in,won,400000,2026-08-17,2026-10-09,2026-09-15,Referral,
+OPP-0100,Deshmukh Restaurant (New) – Festive season stock-up,P008,kavya@shakti-demo.in,proposal,400000,2026-08-31,2026-11-29,,Trade show,
+OPP-0101,Deshmukh Distributors – New SKU listing,C0042,sneha@shakti-demo.in,lost,400000,2026-01-26,2026-04-19,2026-04-07,Field visit,Budget frozen
+OPP-0102,Deshmukh Fresh Mart – Festive season stock-up,C0028,gurpreet@shakti-demo.in,won,800000,2026-02-04,2026-04-03,2026-02-27,Trade show,
+OPP-0103,Joshi Wholesale – Festive season stock-up,C0006,pooja@shakti-demo.in,prospecting,1500000,2026-09-05,2026-11-13,,Inbound call,
+OPP-0104,Naik Dhaba – Bulk edible oil order,C0041,rohan@shakti-demo.in,lost,800000,2026-01-22,2026-04-06,2026-02-06,Referral,Budget frozen
+OPP-0105,Chopra Enterprises – Shelf-space expansion,C0025,harleen@shakti-demo.in,lost,500000,2026-07-26,2026-09-01,2026-09-08,Trade show,Chose competitor
+OPP-0106,Patel Fresh Mart – Bulk edible oil order,C0005,pooja@shakti-demo.in,lost,200000,2026-04-24,2026-07-01,2026-06-19,Trade show,No response
+OPP-0107,Jain Distributors (New) – Private-label staples,P009,amit@shakti-demo.in,lost,500000,2026-06-08,2026-07-20,2026-08-04,Field visit,Budget frozen
+OPP-0108,Mehta Traders – Shelf-space expansion,C0077,kavya@shakti-demo.in,won,500000,2026-08-12,2026-10-02,2026-10-18,Trade show,
+OPP-0109,Jain Wholesale – Annual supply contract,C0065,aditya@shakti-demo.in,lost,2500000,2026-08-06,2026-10-20,2026-09-13,Inbound call,Price too high
+OPP-0110,Malhotra Supermart – Festive season stock-up,C0055,rohan@shakti-demo.in,negotiation,200000,2026-09-27,2026-12-05,,Inbound call,
+OPP-0111,Naik Dhaba – Bulk edible oil order,C0041,rohan@shakti-demo.in,lost,300000,2026-07-24,2026-08-29,2026-08-19,Field visit,No response
+OPP-0112,Kulkarni Supermart – Shelf-space expansion,C0071,kavya@shakti-demo.in,won,1200000,2026-01-25,2026-02-27,2026-03-03,Inbound call,
+OPP-0113,Sethi Fresh Mart – Private-label staples,C0074,kavya@shakti-demo.in,prospecting,500000,2026-10-06,2026-12-24,,Inbound call,
+OPP-0114,Sethi Traders (New) – Bulk edible oil order,P011,rohan@shakti-demo.in,lost,500000,2026-03-11,2026-05-06,2026-03-30,Trade show,Price too high
+OPP-0115,Sethi Traders (New) – New SKU listing,P011,rohan@shakti-demo.in,lost,800000,2026-04-19,2026-06-27,2026-06-29,Inbound call,Price too high
+OPP-0116,Gupta Foods – Private-label staples,C0076,aditya@shakti-demo.in,lost,600000,2026-09-05,2026-11-06,2026-10-31,Inbound call,Credit terms
+OPP-0117,Mehta Wholesale (New) – New SKU listing,P002,harleen@shakti-demo.in,lost,2000000,2025-11-16,2026-01-08,2025-12-22,Inbound call,Chose competitor
+OPP-0118,Naik Dhaba (New) – Shelf-space expansion,P001,amit@shakti-demo.in,lost,2500000,2026-01-11,2026-03-06,2026-02-22,Trade show,Credit terms
+OPP-0119,Mehta Traders – New SKU listing,C0077,kavya@shakti-demo.in,won,1200000,2026-02-03,2026-03-25,2026-03-26,Inbound call,
+OPP-0120,Deshmukh Fresh Mart – New SKU listing,C0028,gurpreet@shakti-demo.in,won,600000,2026-04-19,2026-05-28,2026-06-30,Referral,
+OPP-0121,Deshmukh Traders – Festive season stock-up,C0032,harleen@shakti-demo.in,won,150000,2026-06-30,2026-08-06,2026-07-29,Inbound call,
+OPP-0122,Joshi Wholesale – Shelf-space expansion,C0006,pooja@shakti-demo.in,lost,2000000,2026-03-14,2026-04-15,2026-04-23,Trade show,Chose competitor
+OPP-0123,Jain Wholesale – Festive season stock-up,C0065,aditya@shakti-demo.in,lost,1200000,2026-06-01,2026-08-20,2026-07-05,Field visit,Budget frozen
+OPP-0124,Kulkarni Wholesale – New SKU listing,C0011,amit@shakti-demo.in,won,800000,2026-03-06,2026-05-27,2026-05-03,Inbound call,
+OPP-0125,Joshi Wholesale – Festive season stock-up,C0006,pooja@shakti-demo.in,lost,600000,2025-12-25,2026-02-02,2026-02-18,Trade show,No response
+OPP-0126,Kulkarni Traders – Shelf-space expansion,C0067,kavya@shakti-demo.in,won,200000,2026-08-01,2026-09-15,2026-09-28,Field visit,
+OPP-0127,Kulkarni Wholesale – Bulk edible oil order,C0011,amit@shakti-demo.in,lost,1500000,2026-08-07,2026-09-06,2026-09-08,Referral,Credit terms
+OPP-0128,Mehta Wholesale – Festive season stock-up,C0034,gurpreet@shakti-demo.in,lost,500000,2026-06-29,2026-09-03,2026-08-07,Field visit,Budget frozen
+OPP-0129,Arora Distributors – New SKU listing,C0019,pooja@shakti-demo.in,lost,800000,2025-12-17,2026-01-17,2026-02-17,Inbound call,Chose competitor
+OPP-0130,Mehta Enterprises – New SKU listing,C0078,aditya@shakti-demo.in,won,400000,2026-01-05,2026-04-04,2026-03-21,Inbound call,
+OPP-0131,Sharma Enterprises – Annual supply contract,C0001,amit@shakti-demo.in,won,1500000,2026-01-14,2026-03-19,2026-02-04,Trade show,
+OPP-0132,Mehta Wholesale (New) – Shelf-space expansion,P002,harleen@shakti-demo.in,lost,2500000,2026-06-02,2026-08-26,2026-08-07,Trade show,Credit terms
+OPP-0133,Chopra Enterprises – Festive season stock-up,C0025,harleen@shakti-demo.in,lost,800000,2026-07-01,2026-09-23,2026-08-07,Referral,Credit terms
+OPP-0134,Deshmukh Restaurant (New) – Private-label staples,P008,kavya@shakti-demo.in,won,1000000,2026-03-12,2026-05-31,2026-04-02,Trade show,
+OPP-0135,Deshmukh Traders – Shelf-space expansion,C0032,harleen@shakti-demo.in,qualification,800000,2026-10-14,2026-12-14,,Inbound call,
+OPP-0136,Bansal Traders (New) – Annual supply contract,P006,harleen@shakti-demo.in,lost,1200000,2026-01-28,2026-03-05,2026-03-09,Referral,Budget frozen
+OPP-0137,Shah Hypermarket – Annual supply contract,C0044,rohan@shakti-demo.in,won,150000,2026-06-25,2026-09-08,2026-07-19,Trade show,
+OPP-0138,Kulkarni Foods – Private-label staples,C0051,rohan@shakti-demo.in,won,150000,2026-07-18,2026-10-12,2026-08-06,Inbound call,
+OPP-0139,Mittal Caterers (New) – Shelf-space expansion,P010,gurpreet@shakti-demo.in,won,600000,2026-07-06,2026-09-20,2026-07-31,Inbound call,
+OPP-0140,Malhotra Foods (New) – New SKU listing,P003,rohan@shakti-demo.in,negotiation,150000,2026-10-26,2027-01-09,,Field visit,

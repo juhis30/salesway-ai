@@ -14,6 +14,12 @@ class Base(DeclarativeBase):
 def make_engine(url: str, **kwargs) -> Engine:
     if url.startswith("sqlite"):
         kwargs.setdefault("connect_args", {"check_same_thread": False})
+    elif url.startswith("postgresql"):
+        # Hosted Postgres (Neon) closes idle connections and sits behind a connection pooler:
+        # check connections before use, recycle them, and don't rely on server-side prepared statements.
+        kwargs.setdefault("pool_pre_ping", True)
+        kwargs.setdefault("pool_recycle", 300)
+        kwargs.setdefault("connect_args", {"prepare_threshold": None})
     engine = create_engine(url, **kwargs)
     if url.startswith("sqlite"):
         # SQLite ignores foreign keys (and ON DELETE CASCADE) unless enabled per connection.
