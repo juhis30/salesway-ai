@@ -79,5 +79,10 @@ Key rules carried from the blueprint:
 - ✅ Next best actions (follow-ups, win-back, stalled deals, cross-sell) with Done/Dismiss
 - ✅ Model versions, metrics and stored predictions; Forecast & actions page; assistant uses the forecast
 
-### Phase 5: Integrations: Zoho / HubSpot / Salesforce connectors mapping to the same tables
+### Phase 5: Integrations ✅ (see docs/integrations.md)
+- ✅ Read-only connectors for Zoho CRM, HubSpot and Salesforce, plus a built-in Sandbox CRM
+- ✅ OAuth with signed state, encrypted credentials, token refresh, retries with back-off
+- ✅ Incremental sync through the standard importer (owner matching, de-duplication, per-row errors),
+  sync history, reconnect handling, HubSpot webhooks, hourly scheduled sync via GitHub Actions
+- ⏭ Not yet run against real CRM accounts (needs developer apps registered with each CRM)
 ### Phase 6: Production: Postgres + RLS, Docker, AWS, Redis/Celery, observability, billing

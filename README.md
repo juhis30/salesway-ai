@@ -3,7 +3,7 @@
 AI-powered sales intelligence for Indian sales teams: upload your sales data, see real
 analytics, and ask questions in plain language on the web or WhatsApp.
 
-> **Status: Phases 1–4 complete: analytics, web dashboard, AI assistant (web + WhatsApp) and predictive models.** See [docs/plan.md](docs/plan.md), [docs/assistant.md](docs/assistant.md) and [docs/predictions.md](docs/predictions.md).
+> **Status: Phases 1–5 complete: analytics, web dashboard, AI assistant (web + WhatsApp), predictive models and read-only CRM connectors.** See [docs/plan.md](docs/plan.md), [docs/assistant.md](docs/assistant.md), [docs/predictions.md](docs/predictions.md) and [docs/integrations.md](docs/integrations.md).
 
 **Live demo:** https://salesway-web.onrender.com (free hosting: the first visit after a quiet spell takes about a minute to wake up). Demo logins below. Hosting details: [docs/deployment.md](docs/deployment.md).
 

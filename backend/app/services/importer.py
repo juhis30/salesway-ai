@@ -106,6 +106,8 @@ SPECS: dict[ImportEntity, list[Field]] = {
         Field("opportunity", "str", synonyms=("opportunity_id", "deal_id", "opportunity_code")),
         Field("status", "activity_status", synonyms=("activity_status", "state")),
         Field("notes", "str", synonyms=("note", "remarks", "comments", "outcome", "description")),
+        # The source system's id; with it, re-importing updates the activity instead of adding one.
+        Field("external_id", "str", synonyms=("activity_id",)),
     ],
 }
 
@@ -176,6 +178,8 @@ DATE_FORMATS = ("%Y-%m-%d", "%d-%m-%Y", "%d/%m/%Y", "%d.%m.%Y", "%Y/%m/%d", "%d-
 MONTH_FORMATS = ("%Y-%m", "%m/%Y", "%m-%Y", "%b-%Y", "%b %Y", "%B %Y", "%b-%y")
 STATUS_ALIASES = {
     "pending": OrderStatus.PENDING, "open": OrderStatus.PENDING, "new": OrderStatus.PENDING,
+    "created": OrderStatus.PENDING, "draft": OrderStatus.PENDING,  # Zoho / Salesforce
+    "activated": OrderStatus.CONFIRMED, "shipped": OrderStatus.COMPLETED, "fulfilled": OrderStatus.COMPLETED,
     "confirmed": OrderStatus.CONFIRMED, "approved": OrderStatus.CONFIRMED,
     "completed": OrderStatus.COMPLETED, "complete": OrderStatus.COMPLETED,
     "delivered": OrderStatus.COMPLETED, "invoiced": OrderStatus.COMPLETED,
@@ -643,11 +647,20 @@ class _ActivityChecker(_CustomerLookupMixin, _Checker):
                 ).where(SalesActivity.organization_id == self.org_id)
             ).tuples()
         )
+        self.by_external_id = {
+            ext.lower(): aid
+            for aid, ext in self.db.execute(
+                select(SalesActivity.id, SalesActivity.external_id).where(
+                    SalesActivity.organization_id == self.org_id, SalesActivity.external_id.is_not(None)
+                )
+            )
+        }
         self.seen: set[tuple] = set()
         self.duplicates = 0
 
     def check(self, row, values):
         errors = []
+        values["existing_id"] = None
         values["user_id"] = self.users.get(values["salesperson_email"])
         if values["user_id"] is None:
             errors.append(("salesperson_email", f"no user with email {values['salesperson_email']} in this organisation"))
@@ -667,6 +680,15 @@ class _ActivityChecker(_CustomerLookupMixin, _Checker):
         values["status"] = values["status"] or ActivityStatus.DONE
         if errors:
             return errors
+
+        if values["external_id"]:
+            key = ("external", values["external_id"].lower())
+            if key in self.seen:
+                return [("external_id", "duplicate of an earlier row in this file")]
+            self.seen.add(key)
+            values["existing_id"] = self.by_external_id.get(values["external_id"].lower())
+            values["duplicate"] = False
+            return []
 
         key = (values["activity_date"], values["user_id"], values["customer_id"], values["activity_type"], values["status"])
         if key in self.seen:
@@ -694,9 +716,16 @@ _CHECKERS = {
 # --- Applying ----------------------------------------------------------------------------
 
 
-def apply(db: Session, organization_id: uuid.UUID, result: ValidationResult) -> dict[str, int]:
-    """Write validated rows. The caller commits."""
-    return _APPLIERS[result.entity](db, organization_id, [v for _, v in result.rows])
+def apply(db: Session, organization_id: uuid.UUID, result: ValidationResult, source: str = "import") -> dict[str, int]:
+    """Write validated rows. The caller commits.
+
+    source: "import" for file uploads; "sync:<provider>" for CRM syncs, where an order seen
+    again may have changed status (a CRM order can be cancelled later) and is updated.
+    """
+    rows = [v for _, v in result.rows]
+    if result.entity == ImportEntity.ORDERS:
+        return _apply_orders(db, organization_id, rows, source)
+    return _APPLIERS[result.entity](db, organization_id, rows)
 
 
 def _apply_customers(db: Session, org_id: uuid.UUID, rows: list[dict]) -> dict[str, int]:
@@ -753,16 +782,29 @@ def _apply_products(db: Session, org_id: uuid.UUID, rows: list[dict]) -> dict[st
     return {"created": created, "updated": updated}
 
 
-def _apply_orders(db: Session, org_id: uuid.UUID, rows: list[dict]) -> dict[str, int]:
-    existing = set(db.scalars(select(SalesOrder.order_number).where(SalesOrder.organization_id == org_id)))
+def _apply_orders(db: Session, org_id: uuid.UUID, rows: list[dict], source: str = "import") -> dict[str, int]:
+    syncing = source.startswith("sync:")
+    existing = {
+        number: (order_id, status)
+        for order_id, number, status in db.execute(
+            select(SalesOrder.id, SalesOrder.order_number, SalesOrder.status).where(SalesOrder.organization_id == org_id)
+        )
+    }
     orders: dict[str, SalesOrder] = {}
     skipped: set[str] = set()
+    status_updated: set[str] = set()
     cent = Decimal("0.01")
 
     for values in rows:
         number = values["order_number"]
         if number in existing:
-            skipped.add(number)
+            order_id, status = existing[number]
+            if syncing and status != values["status"]:
+                if number not in status_updated:  # once per order, not per line
+                    db.get(SalesOrder, order_id).status = values["status"]
+                    status_updated.add(number)
+            else:
+                skipped.add(number)
             continue
         order = orders.get(number)
         if order is None:
@@ -777,7 +819,7 @@ def _apply_orders(db: Session, org_id: uuid.UUID, rows: list[dict]) -> dict[str,
                 net_amount=Decimal("0"),
                 tax_amount=Decimal("0"),
                 total_amount=Decimal("0"),
-                source="import",
+                source=source,
             )
             orders[number] = order
         # Round to the column precision up front so stored and computed values agree exactly.
@@ -804,6 +846,7 @@ def _apply_orders(db: Session, org_id: uuid.UUID, rows: list[dict]) -> dict[str,
         "orders_created": len(orders),
         "lines_created": sum(len(o.items) for o in orders.values()),
         "orders_skipped_existing": len(skipped),
+        **({"orders_status_updated": len(status_updated)} if syncing else {}),
     }
 
 
@@ -852,25 +895,30 @@ def _apply_opportunities(db: Session, org_id: uuid.UUID, rows: list[dict]) -> di
 
 
 def _apply_activities(db: Session, org_id: uuid.UUID, rows: list[dict]) -> dict[str, int]:
-    created = skipped = 0
+    created = updated = skipped = 0
     for values in rows:
         if values["duplicate"]:
             skipped += 1
             continue
-        db.add(
-            SalesActivity(
-                organization_id=org_id,
-                user_id=values["user_id"],
-                customer_id=values["customer_id"],
-                opportunity_id=values["opportunity_id"],
-                activity_type=values["activity_type"],
-                status=values["status"],
-                activity_date=values["activity_date"],
-                notes=values["notes"],
-            )
+        fields = dict(
+            user_id=values["user_id"],
+            customer_id=values["customer_id"],
+            opportunity_id=values["opportunity_id"],
+            activity_type=values["activity_type"],
+            status=values["status"],
+            activity_date=values["activity_date"],
+            notes=values["notes"],
+            external_id=values["external_id"],
         )
-        created += 1
-    return {"created": created, "skipped_existing": skipped}
+        if values["existing_id"]:
+            activity = db.get(SalesActivity, values["existing_id"])
+            for name, value in fields.items():
+                setattr(activity, name, value)
+            updated += 1
+        else:
+            db.add(SalesActivity(organization_id=org_id, **fields))
+            created += 1
+    return {"created": created, "updated": updated, "skipped_existing": skipped}
 
 
 _APPLIERS = {

@@ -29,6 +29,27 @@ services:
         value: mock
       - key: WHATSAPP_PROVIDER
         value: mock
+      # CRM connections (docs/integrations.md)
+      - key: CREDENTIALS_KEY
+        generateValue: true # encrypts stored CRM tokens; changing it means reconnecting
+      - key: PUBLIC_API_URL
+        value: https://salesway-api.onrender.com
+      - key: PUBLIC_WEB_URL
+        value: https://salesway-web.onrender.com
+      - key: SYNC_CRON_TOKEN
+        generateValue: true # copy into the GitHub secret SYNC_CRON_TOKEN to enable hourly syncs
+      - key: ZOHO_CLIENT_ID
+        sync: false
+      - key: ZOHO_CLIENT_SECRET
+        sync: false
+      - key: HUBSPOT_CLIENT_ID
+        sync: false
+      - key: HUBSPOT_CLIENT_SECRET
+        sync: false
+      - key: SALESFORCE_CLIENT_ID
+        sync: false
+      - key: SALESFORCE_CLIENT_SECRET
+        sync: false
 
   - type: web
     name: salesway-web

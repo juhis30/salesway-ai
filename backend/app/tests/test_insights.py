@@ -151,4 +151,4 @@ def test_insights_respect_scope(client, pipeline_org):
 
 def test_reimporting_activities_skips_duplicates(client, pipeline_org):
     again = upload(client, pipeline_org["admin"], "activities", ACTIVITIES)
-    assert again["result"] == {"created": 0, "skipped_existing": 6}
+    assert again["result"] == {"created": 0, "updated": 0, "skipped_existing": 6}

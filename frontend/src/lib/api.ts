@@ -526,6 +526,42 @@ export interface NextAction {
   entity_id: string;
 }
 
+// --- CRM connections ------------------------------------------------------------------------
+
+export interface IntegrationInfo {
+  id: string;
+  provider: string;
+  status: "connected" | "needs_reconnect" | "error";
+  account_label: string | null;
+  last_sync_at: string | null;
+  last_success_at: string | null;
+  last_error: string | null;
+  created_at: string;
+}
+
+export interface Provider {
+  provider: string;
+  label: string;
+  description: string;
+  entities: string[];
+  not_synced: string | null;
+  configured: boolean;
+  missing_settings: string[];
+  integration: IntegrationInfo | null;
+}
+
+export interface SyncJobInfo {
+  id: string;
+  trigger: "manual" | "scheduled" | "webhook";
+  status: "running" | "succeeded" | "partial" | "failed";
+  started_at: string;
+  finished_at: string | null;
+  counts: Record<string, Record<string, number>>;
+  errors: { entity: string; row: number; field: string | null; message: string }[];
+  message: string | null;
+  records: number;
+}
+
 // --- Assistant & WhatsApp -------------------------------------------------------------------
 
 export interface ChatMessage {

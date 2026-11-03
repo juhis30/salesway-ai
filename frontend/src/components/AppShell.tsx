@@ -23,6 +23,7 @@ const NAV: NavItem[] = [
   { href: "/activity", label: "Team activity", icon: "M22 12h-4l-3 9L9 3l-3 9H2" },
   { href: "/customers", label: "Customers", icon: "M16 11a4 4 0 10-8 0 4 4 0 008 0zM4 21a8 8 0 0116 0" },
   { href: "/products", label: "Products", icon: "M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8" },
+  { href: "/integrations", label: "Connections", icon: "M10 13a5 5 0 007.07 0l3-3a5 5 0 00-7.07-7.07l-1 1M14 11a5 5 0 00-7.07 0l-3 3a5 5 0 007.07 7.07l1-1", show: isAdmin },
   { href: "/whatsapp", label: "WhatsApp", icon: "M3 21l1.7-5A9 9 0 1112 21a9 9 0 01-4.3-1.1L3 21zM9 10c0 3 2 5 5 5l1.5-1.5-2-1-1 1c-1 0-2-1-2-2l1-1-1-2L9 10z", show: isAdmin },
   { href: "/imports", label: "Data import", icon: "M12 3v12m0 0l-4-4m4 4l4-4M4 17v3h16v-3", show: canImport },
   { href: "/users", label: "Users & teams", icon: "M17 20v-2a4 4 0 00-4-4H7a4 4 0 00-4 4v2M10 10a4 4 0 100-8 4 4 0 000 8zM21 20v-2a4 4 0 00-3-3.87M16 2.13a4 4 0 010 7.75", show: (r) => r !== "sales_executive" },

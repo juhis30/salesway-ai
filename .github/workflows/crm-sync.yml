@@ -1,0 +1,26 @@
+# Hourly CRM sync for the hosted app. Render's free plan has no scheduler, so GitHub calls the
+# API's sync endpoint instead. Does nothing until the repository secret SYNC_CRON_TOKEN is set
+# (copy the value Render generated for SYNC_CRON_TOKEN on the salesway-api service).
+name: CRM sync
+
+on:
+  schedule:
+    - cron: "17 * * * *" # every hour, at a quiet minute
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger due syncs
+        env:
+          TOKEN: ${{ secrets.SYNC_CRON_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "SYNC_CRON_TOKEN is not set; skipping."
+            exit 0
+          fi
+          # A sleeping free instance takes up to a minute to wake.
+          curl --fail --silent --show-error --max-time 180 -X POST \
+            -H "X-Sync-Token: $TOKEN" \
+            https://salesway-api.onrender.com/api/v1/integrations/sync-due

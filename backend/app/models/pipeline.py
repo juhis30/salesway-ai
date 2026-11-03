@@ -38,7 +38,10 @@ class SalesActivity(IdMixin, TimestampMixin, TenantMixin, Base):
     """A visit/call/meeting that happened (done) or a follow-up that is planned."""
 
     __tablename__ = "sales_activities"
-    __table_args__ = (Index("ix_sales_activities_org_date", "organization_id", "activity_date"),)
+    __table_args__ = (
+        Index("ix_sales_activities_org_date", "organization_id", "activity_date"),
+        UniqueConstraint("organization_id", "external_id", name="uq_sales_activities_org_external_id"),
+    )
 
     user_id: Mapped[uuid.UUID] = mapped_column(Uuid, ForeignKey("users.id", ondelete="CASCADE"), index=True)
     customer_id: Mapped[uuid.UUID | None] = mapped_column(
@@ -52,3 +55,5 @@ class SalesActivity(IdMixin, TimestampMixin, TenantMixin, Base):
     # The date it happened, or for a planned follow-up, the date it is due.
     activity_date: Mapped[date] = mapped_column(Date)
     notes: Mapped[str | None] = mapped_column(Text)
+    # The source system's id (CRM task/call id), so a synced activity is updated, not duplicated.
+    external_id: Mapped[str | None] = mapped_column(String(128))

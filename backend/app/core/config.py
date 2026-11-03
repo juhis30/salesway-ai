@@ -49,6 +49,27 @@ class Settings(BaseSettings):
 
     assistant_rate_limit_per_minute: int = 30
 
+    # --- CRM connections (read-only) ---------------------------------------------------------
+    # Public addresses: OAuth sends people back to the API's callback, which then returns them to the web app.
+    public_api_url: str = "http://localhost:8000"
+    public_web_url: str = "http://localhost:3000"
+    # Encrypts stored CRM credentials. Any long random string; falls back to JWT_SECRET if unset.
+    credentials_key: str = ""
+    # Lets an external scheduler (e.g. GitHub Actions) trigger due syncs; disabled when empty.
+    sync_cron_token: str = ""
+    sync_interval_minutes: int = 60
+
+    zoho_client_id: str = ""
+    zoho_client_secret: str = ""
+    zoho_accounts_url: str = "https://accounts.zoho.in"  # .com / .eu / .com.au ... for other data centres
+    zoho_api_version: str = "v7"
+    hubspot_client_id: str = ""
+    hubspot_client_secret: str = ""
+    salesforce_client_id: str = ""
+    salesforce_client_secret: str = ""
+    salesforce_login_url: str = "https://login.salesforce.com"  # https://test.salesforce.com for sandboxes
+    salesforce_api_version: str = "v62.0"
+
 
 @lru_cache
 def get_settings() -> Settings:
