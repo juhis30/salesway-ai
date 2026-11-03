@@ -134,7 +134,7 @@ function NeedsAttention({ query }: { query: Record<string, string> }) {
 
   const card = (href: string, label: string, value: string | null, detail: React.ReactNode, status: Status) => (
     <Link href={href} className="card group flex items-start gap-3 p-4 transition hover:bg-surface-2">
-      <StatusIcon status={status} />
+      {value === null ? <span className="h-4 w-4 shrink-0 animate-pulse rounded-full bg-surface-2" aria-hidden /> : <StatusIcon status={status} />}
       <div className="min-w-0 flex-1">
         <p className="text-sm text-ink-2">{label}</p>
         <p className="text-xl font-semibold">{value ?? "…"}</p>
