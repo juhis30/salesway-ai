@@ -12,7 +12,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
-from app.core.database import get_db
+from app.core.database import get_db, rls_bypass, set_tenant
 from app.core.deps import require_roles
 from app.integrations.crm import base
 from app.integrations.crm.hubspot import verify_signature
@@ -91,7 +91,7 @@ def connect(provider: str, user: User = Depends(admin_only), db: Session = Depen
     if connector is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Unknown system")
     if connector.missing_settings():
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY,
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT,
                             f"{connector.label} isn't set up on this server yet: set {', '.join(connector.missing_settings())}.")
     if not connector.uses_oauth:
         _save_connection(db, user, provider, connector.exchange_code(None, "", ""))
@@ -133,6 +133,7 @@ def oauth_callback(provider: str, state: str = "", code: str = "", error: str = 
     if error or not code:
         return _back(web, error=error or "Sign-in was cancelled.")
 
+    set_tenant(db, uuid.UUID(claims["org"]))  # the signed state says which organisation started this
     user = db.get(User, uuid.UUID(claims["user"]))
     if user is None or str(user.organization_id) != claims["org"] or not user.is_active:
         return _back(web, error="Your account changed during sign-in. Try again.")
@@ -198,7 +199,9 @@ async def hubspot_webhook(request: Request, db: Session = Depends(get_db)):
     except (ValueError, AttributeError, TypeError):
         raise HTTPException(status.HTTP_400_BAD_REQUEST, "Invalid payload") from None
     synced = 0
-    for integration in db.scalars(select(Integration).where(Integration.provider == "hubspot")):
+    with rls_bypass(db):  # find which organisation's connection this portal belongs to
+        hubspot = list(db.scalars(select(Integration).where(Integration.provider == "hubspot")))
+    for integration in hubspot:
         if (integration.settings or {}).get("portal_id") in portals and integration.status != "needs_reconnect":
             run_sync(db, integration, trigger="webhook")
             synced += 1

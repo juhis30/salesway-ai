@@ -5,7 +5,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
-from app.core.database import get_db
+from app.core.database import get_db, set_tenant
 from app.core.security import decode_token
 from app.models import Organization, Role, User
 
@@ -27,8 +27,11 @@ def get_current_user(
     try:
         payload = decode_token(creds.credentials, "access")
         user_id = uuid.UUID(payload["sub"])
+        org_id = uuid.UUID(payload["org"])
     except (jwt.InvalidTokenError, ValueError):
         raise _unauthorized from None
+
+    set_tenant(db, org_id)  # from here on the database only shows this organisation's rows
 
     # Role and organisation are always re-read from the database, never trusted from the token.
     user = db.get(User, user_id)
@@ -37,6 +40,7 @@ def get_current_user(
         or not user.is_active
         or user.deleted_at is not None
         or str(user.organization_id) != payload["org"]
+        or payload.get("ver", 0) != user.token_version  # revoked by a password change, reset or deactivation
     ):
         raise _unauthorized
     return user

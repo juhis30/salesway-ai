@@ -85,4 +85,10 @@ Key rules carried from the blueprint:
 - ✅ Incremental sync through the standard importer (owner matching, de-duplication, per-row errors),
   sync history, reconnect handling, HubSpot webhooks, hourly scheduled sync via GitHub Actions
 - ⏭ Not yet run against real CRM accounts (needs developer apps registered with each CRM)
-### Phase 6: Production: Postgres + RLS, Docker, AWS, Redis/Celery, observability, billing
+### Phase 6: Production readiness (in progress; see docs/security.md)
+- ✅ Security and reliability: Postgres row-level security on every tenant table (tested as a
+  non-bypass role), login lockout, password rules, change/reset password with sign-out everywhere,
+  security headers, request ids and safe error pages, JSON logs, optional Sentry, `/health/ready`,
+  CI on SQLite and Postgres with dependency audits, deploy only after checks pass, Dependabot
+- ⏭ httpOnly cookie sessions, a background job queue (instead of syncs and training inside
+  requests), backups with a tested restore, scheduled WhatsApp briefings, billing

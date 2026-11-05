@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AuthCard } from "@/components/AuthCard";
+import { PASSWORD_HINT } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 
 export default function RegisterPage() {
@@ -54,8 +55,8 @@ export default function RegisterPage() {
         </div>
         <div>
           <label className="label" htmlFor="password">Password</label>
-          <input id="password" type="password" className="input" autoComplete="new-password" required minLength={8} maxLength={72} value={form.password} onChange={set("password")} />
-          <p className="mt-1 text-xs text-muted">At least 8 characters.</p>
+          <input id="password" type="password" className="input" autoComplete="new-password" required minLength={10} maxLength={72} value={form.password} onChange={set("password")} />
+          <p className="mt-1 text-xs text-muted">{PASSWORD_HINT}</p>
         </div>
         {error && <p role="alert" className="text-sm text-critical">{error}</p>}
         <button className="btn-primary w-full" disabled={busy}>{busy ? "Creating…" : "Create account"}</button>

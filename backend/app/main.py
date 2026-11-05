@@ -2,7 +2,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.router import api_router
+from app.core import observability
 from app.core.config import DEFAULT_JWT_SECRET, get_settings
+from app.core.database import engine
 
 
 def create_app() -> FastAPI:
@@ -25,9 +27,11 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
     app.include_router(api_router, prefix="/api/v1")
+    observability.install(app, engine)
 
     @app.get("/health", tags=["health"])
     def health():
+        """Liveness: the process is up. /health/ready also checks the database."""
         return {"status": "ok"}
 
     return app

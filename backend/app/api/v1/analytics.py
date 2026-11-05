@@ -36,9 +36,9 @@ def get_filters(
     end = end or today
     start = start or month_start(end)
     if start > end:
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "start must be on or before end")
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "start must be on or before end")
     if end - start > MAX_RANGE:
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "Date range cannot exceed 3 years")
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "Date range cannot exceed 3 years")
 
     scope = resolve_salesperson_filter(db, user, salesperson_id, team_id)
     if customer_id is not None:

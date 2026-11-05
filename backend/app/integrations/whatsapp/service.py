@@ -8,6 +8,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.ai.orchestrator import Reply, answer, record_exchange
+from app.core.database import rls_bypass, set_tenant
 from app.ai.schema import Intent, Interpretation
 from app.integrations.whatsapp.meta import Inbound, StatusUpdate
 from app.integrations.whatsapp.sender import Sender, SendError
@@ -24,7 +25,9 @@ OPTED_IN = "You're subscribed to SaleSway briefings and alerts. Send STOP any ti
 
 
 def account_for(db: Session, phone_number_id: str) -> WhatsAppAccount | None:
-    return db.scalar(select(WhatsAppAccount).where(WhatsAppAccount.phone_number_id == phone_number_id, WhatsAppAccount.enabled))
+    """Which organisation owns this business number (a lookup across organisations)."""
+    with rls_bypass(db):
+        return db.scalar(select(WhatsAppAccount).where(WhatsAppAccount.phone_number_id == phone_number_id, WhatsAppAccount.enabled))
 
 
 def already_processed(db: Session, message_id: str) -> bool:
@@ -52,6 +55,7 @@ def _conversation(db: Session, user: User) -> Conversation:
 
 def handle_message(db: Session, organization_id: uuid.UUID, phone_number_id: str, inbound: Inbound, sender: Sender) -> str | None:
     """Answer one inbound message. Returns the reply text (None if it was a duplicate)."""
+    set_tenant(db, organization_id)
     if already_processed(db, inbound.message_id):
         log.info("Duplicate WhatsApp message %s ignored", inbound.message_id)
         return None
@@ -107,6 +111,9 @@ def apply_status(db: Session, update: StatusUpdate) -> None:
     """Delivery receipts (sent / delivered / read / failed) for messages we sent."""
     if not update.message_id:
         return
-    message = db.scalar(select(Message).where(Message.channel_message_id == update.message_id, Message.role == "assistant"))
+    with rls_bypass(db):  # a receipt doesn't say which organisation it's for
+        message = db.scalar(select(Message).where(Message.channel_message_id == update.message_id, Message.role == "assistant"))
     if message is not None:
+        set_tenant(db, message.organization_id)
         message.delivery_status = update.status
+        db.flush()

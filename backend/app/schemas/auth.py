@@ -1,6 +1,8 @@
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from pydantic import BaseModel, EmailStr, Field, field_validator, model_validator
+
+from app.core.passwords import password_problem
 
 
 class RegisterRequest(BaseModel):
@@ -21,10 +23,21 @@ class RegisterRequest(BaseModel):
             raise ValueError("Unknown timezone") from None
         return value
 
+    @model_validator(mode="after")
+    def strong_password(self):
+        if problem := password_problem(self.password, self.email):
+            raise ValueError(problem)
+        return self
+
 
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str = Field(max_length=72)
+
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str = Field(max_length=72)
+    new_password: str = Field(max_length=72)
 
 
 class RefreshRequest(BaseModel):

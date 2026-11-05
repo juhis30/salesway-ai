@@ -70,14 +70,14 @@ async def preview_import(
         if mapping_override is not None and not isinstance(mapping_override, dict):
             raise ValueError
     except ValueError:
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "mapping must be a JSON object") from None
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "mapping must be a JSON object") from None
 
     filename = (file.filename or "upload")[:255]
     try:
         raw_rows = importer.read_table(content, filename)
         result = importer.validate(db, user.organization_id, entity, raw_rows, mapping_override)
     except importer.ImportFileError as exc:
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, str(exc)) from None
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, str(exc)) from None
 
     job = ImportJob(
         organization_id=user.organization_id,
@@ -119,9 +119,9 @@ def confirm_import(job_id: uuid.UUID, user: User = Depends(can_import), db: Sess
     try:
         result = importer.validate(db, user.organization_id, job.entity, job.raw_rows or [], job.column_mapping)
     except importer.ImportFileError as exc:
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, str(exc)) from None
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, str(exc)) from None
     if not result.rows:
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "No valid rows to import")
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "No valid rows to import")
 
     counts = importer.apply(db, user.organization_id, result)
     job.status = ImportStatus.COMPLETED

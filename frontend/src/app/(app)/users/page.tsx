@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Empty, ErrorBox, SectionCard, Skeleton, useApi } from "@/components/ui";
-import { api, ROLE_LABELS, type Role, type Team, type Territory, type User } from "@/lib/api";
+import { api, PASSWORD_HINT, ROLE_LABELS, type Role, type Team, type Territory, type User } from "@/lib/api";
 import { isAdmin, useAuth } from "@/lib/auth";
 
 const ASSIGNABLE_ROLES = (Object.keys(ROLE_LABELS) as Role[]).filter((r) => r !== "super_admin");
@@ -17,6 +17,8 @@ export default function UsersPage() {
   const teamNames = useMemo(() => new Map((teams.data ?? []).map((t) => [t.id, t.name])), [teams.data]);
   const territoryNames = useMemo(() => new Map((territories.data ?? []).map((t) => [t.id, t.name])), [territories.data]);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [resetting, setResetting] = useState<User | null>(null);
+  const demo = me!.organization.plan === "demo";
 
   async function toggleActive(user: User) {
     setActionError(null);
@@ -40,6 +42,8 @@ export default function UsersPage() {
       {admin && teams.data && territories.data && (
         <AddUser teams={teams.data} territories={territories.data} onCreated={users.reload} />
       )}
+
+      {resetting && <ResetPassword user={resetting} onClose={() => setResetting(null)} />}
 
       <SectionCard title="People" subtitle={users.data && `${users.data.length} users`}>
         {actionError && (
@@ -80,9 +84,16 @@ export default function UsersPage() {
                     {admin && (
                       <td className="td text-right">
                         {u.id !== me!.user.id && (
-                          <button className="text-sm font-medium text-accent hover:underline" onClick={() => toggleActive(u)}>
-                            {u.is_active ? "Deactivate" : "Reactivate"}
-                          </button>
+                          <div className="flex justify-end gap-4">
+                            {!demo && (
+                              <button className="text-sm font-medium text-accent hover:underline" onClick={() => setResetting(u)}>
+                                Reset password
+                              </button>
+                            )}
+                            <button className="text-sm font-medium text-accent hover:underline" onClick={() => toggleActive(u)}>
+                              {u.is_active ? "Deactivate" : "Reactivate"}
+                            </button>
+                          </div>
                         )}
                       </td>
                     )}
@@ -153,7 +164,7 @@ function AddUser({ teams, territories, onCreated }: { teams: Team[]; territories
         </div>
         <div>
           <label className="label" htmlFor="u-pass">Temporary password</label>
-          <input id="u-pass" type="password" className="input" required minLength={8} maxLength={72} value={form.password} onChange={set("password")} />
+          <input id="u-pass" type="password" className="input" required minLength={10} maxLength={72} title={PASSWORD_HINT} value={form.password} onChange={set("password")} />
         </div>
         <div>
           <label className="label" htmlFor="u-phone">WhatsApp number (optional)</label>
@@ -191,6 +202,53 @@ function AddUser({ teams, territories, onCreated }: { teams: Team[]; territories
         </div>
         {error && <p role="alert" className="text-sm text-critical sm:col-span-2 lg:col-span-4">{error}</p>}
       </form>
+    </SectionCard>
+  );
+}
+
+// Sets a temporary password to pass on to the person. It also unlocks the account and signs them out everywhere.
+function ResetPassword({ user, onClose }: { user: User; onClose: () => void }) {
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [done, setDone] = useState(false);
+  const [busy, setBusy] = useState(false);
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    setError(null);
+    try {
+      await api(`/users/${user.id}/reset-password`, { method: "POST", json: { new_password: password } });
+      setDone(true);
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <SectionCard title={`Reset password for ${user.full_name}`} subtitle="Unlocks the account and signs them out on every device.">
+      {done ? (
+        <div className="flex items-center justify-between gap-4">
+          <p role="status" className="text-sm text-good">Done. Give {user.full_name} the temporary password and ask them to change it from their Account page.</p>
+          <button className="btn-ghost" onClick={onClose}>Close</button>
+        </div>
+      ) : (
+        <form onSubmit={submit} className="flex flex-wrap items-end gap-3">
+          <div className="min-w-64 flex-1">
+            <label className="label" htmlFor="reset-pass">Temporary password</label>
+            <input id="reset-pass" type="password" className="input" autoComplete="new-password" required minLength={10} maxLength={72}
+              aria-describedby="reset-hint" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <p id="reset-hint" className="mt-1 text-xs text-muted">{PASSWORD_HINT}</p>
+          </div>
+          <div className="flex gap-2 pb-5">
+            <button className="btn-primary" disabled={busy}>{busy ? "Resetting…" : "Reset password"}</button>
+            <button type="button" className="btn-ghost" onClick={onClose}>Cancel</button>
+          </div>
+          {error && <p role="alert" className="w-full text-sm text-critical">{error}</p>}
+        </form>
+      )}
     </SectionCard>
   );
 }

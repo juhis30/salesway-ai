@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 
 from app.analytics.periods import org_today
 from app.core.config import get_settings
+from app.core.database import rls_bypass, set_tenant
 from app.integrations.crm import base
 from app.integrations.crm.hubspot import HubSpotConnector
 from app.integrations.crm.salesforce import SalesforceConnector
@@ -33,6 +34,7 @@ def default_http() -> httpx.Client:
 def run_sync(db: Session, integration: Integration, trigger: str = "manual", http: httpx.Client | None = None,
              sleep: Callable[[float], None] | None = None) -> SyncJob:
     connector = CONNECTORS[integration.provider]
+    set_tenant(db, integration.organization_id)
     org = db.get(Organization, integration.organization_id)
     started = datetime.now(timezone.utc)
     job = SyncJob(organization_id=org.id, integration_id=integration.id, trigger=trigger, status="running",
@@ -95,6 +97,7 @@ def run_sync(db: Session, integration: Integration, trigger: str = "manual", htt
 
 def _after_rollback(db: Session, job: SyncJob, integration: Integration) -> tuple[SyncJob, Integration]:
     """A failed sync writes nothing from that run, but its job record and the error are kept."""
+    set_tenant(db, job.organization_id)  # a rollback starts a new transaction
     integration = db.get(Integration, integration.id)
     failed = SyncJob(organization_id=job.organization_id, integration_id=integration.id, trigger=job.trigger,
                      status="failed", started_at=job.started_at, counts=job.counts, errors=job.errors, records=0)
@@ -107,7 +110,9 @@ def sync_due(db: Session, now: datetime | None = None) -> list[SyncJob]:
     now = now or datetime.now(timezone.utc)
     cutoff = now - timedelta(minutes=get_settings().sync_interval_minutes)
     jobs = []
-    for integration in db.scalars(select(Integration).where(Integration.status.in_(("connected", "error")))):
+    with rls_bypass(db):  # every organisation's connections
+        due = list(db.scalars(select(Integration).where(Integration.status.in_(("connected", "error")))))
+    for integration in due:
         last = integration.last_sync_at
         if last is not None and last.tzinfo is None:
             last = last.replace(tzinfo=timezone.utc)

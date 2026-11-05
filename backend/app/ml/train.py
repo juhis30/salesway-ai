@@ -291,9 +291,9 @@ def train_organization(db: Session, org: Organization, today: date | None = None
 if __name__ == "__main__":
     import json
 
-    from app.core.database import SessionLocal
+    from app.core.database import system_session
 
-    session = SessionLocal()
+    session = system_session()
     try:
         for organization in session.scalars(select(Organization)):
             result = train_organization(session, organization)

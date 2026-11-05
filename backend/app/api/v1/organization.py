@@ -6,11 +6,13 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.core.database import get_db
+from app.core.database import get_db, rls_bypass
 from app.core.deps import get_current_org, get_current_user, require_roles
 from app.core.security import hash_password
 from app.models import ADMIN_ROLES, Organization, Role, Team, Territory, User
+from app.core.passwords import DEMO_PASSWORDS_FIXED, password_problem
 from app.schemas.org import (
+    PasswordReset,
     OrganizationOut,
     OrganizationUpdate,
     TeamIn,
@@ -94,11 +96,11 @@ def _check_org_refs(db: Session, org_id: uuid.UUID, team_id: uuid.UUID | None, t
     if team_id is not None:
         team = db.get(Team, team_id)
         if team is None or team.organization_id != org_id:
-            raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "Unknown team")
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "Unknown team")
     if territory_id is not None:
         territory = db.get(Territory, territory_id)
         if territory is None or territory.organization_id != org_id:
-            raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "Unknown territory")
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "Unknown territory")
 
 
 def _check_role_assignable(actor: User, role: Role):
@@ -120,7 +122,9 @@ def create_user(body: UserCreate, actor: User = Depends(admin_only), db: Session
     _check_role_assignable(actor, body.role)
     _check_org_refs(db, actor.organization_id, body.team_id, body.territory_id)
     email = body.email.lower()
-    if db.scalar(select(User.id).where(User.email == email)):
+    with rls_bypass(db):  # emails are unique across all organisations
+        taken = db.scalar(select(User.id).where(User.email == email))
+    if taken:
         raise HTTPException(status.HTTP_409_CONFLICT, "An account with this email already exists")
 
     user = User(
@@ -155,9 +159,11 @@ def update_user(
     if "role" in changes:
         _check_role_assignable(actor, changes["role"])
     if user.id == actor.id and (changes.get("is_active") is False or changes.get("role", actor.role) != actor.role):
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "You cannot deactivate or demote yourself")
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "You cannot deactivate or demote yourself")
     _check_org_refs(db, actor.organization_id, changes.get("team_id"), changes.get("territory_id"))
 
+    if changes.get("is_active") is False or ("role" in changes and changes["role"] != user.role):
+        user.token_version += 1  # signs them out everywhere right away
     for field, value in changes.items():
         setattr(user, field, value)
     if changes.get("whatsapp_opt_in"):
@@ -168,3 +174,21 @@ def update_user(
     )
     db.commit()
     return user
+
+
+@router.post("/users/{user_id}/reset-password", status_code=status.HTTP_204_NO_CONTENT)
+def reset_password(user_id: uuid.UUID, body: PasswordReset, actor: User = Depends(admin_only), db: Session = Depends(get_db)):
+    """Set a temporary password for someone (also unlocks the account and signs them out everywhere)."""
+    if db.get(Organization, actor.organization_id).is_shared_demo:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, DEMO_PASSWORDS_FIXED)
+    user = db.get(User, user_id)
+    if user is None or user.organization_id != actor.organization_id or user.deleted_at is not None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "User not found")
+    if problem := password_problem(body.new_password, user.email):
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, problem)
+    user.hashed_password = hash_password(body.new_password)
+    user.password_changed_at = datetime.now(timezone.utc)
+    user.token_version += 1
+    user.failed_logins, user.locked_until = 0, None
+    audit.record(db, actor.organization_id, actor.id, "user.password_reset", "user", user.id)
+    db.commit()

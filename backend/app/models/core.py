@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, String, UniqueConstraint, Uuid
+from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Integer, String, UniqueConstraint, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
@@ -17,6 +17,11 @@ class Organization(IdMixin, TimestampMixin, Base):
     timezone: Mapped[str] = mapped_column(String(64), default="Asia/Kolkata")
     currency: Mapped[str] = mapped_column(String(3), default="INR")
     plan: Mapped[str] = mapped_column(String(32), default="trial")
+
+    @property
+    def is_shared_demo(self) -> bool:
+        """The public demo, where everyone signs in with the same published passwords."""
+        return self.plan == "demo"
 
 
 class Territory(IdMixin, TimestampMixin, TenantMixin, Base):
@@ -57,6 +62,13 @@ class User(IdMixin, TimestampMixin, TenantMixin, Base):
     # Replies to the user's own WhatsApp questions don't need it.
     whatsapp_opt_in: Mapped[bool] = mapped_column(Boolean, default=False, server_default="0")
     whatsapp_opt_in_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Login protection: consecutive wrong passwords lock the account for a while.
+    failed_logins: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    locked_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Every token carries this number; raising it (password change, reset, deactivation, role
+    # change) makes all existing tokens for the user stop working immediately.
+    token_version: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    password_changed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
     team: Mapped[Team | None] = relationship()
     territory: Mapped[Territory | None] = relationship()

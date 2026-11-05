@@ -24,7 +24,7 @@ def verify_password(password: str, hashed: str) -> bool:
 DUMMY_PASSWORD_HASH = hash_password("not-a-real-password")
 
 
-def create_token(user_id: str, organization_id: str, token_type: TokenType) -> str:
+def create_token(user_id: str, organization_id: str, token_type: TokenType, version: int = 0) -> str:
     settings = get_settings()
     now = datetime.now(timezone.utc)
     if token_type == "access":
@@ -35,6 +35,7 @@ def create_token(user_id: str, organization_id: str, token_type: TokenType) -> s
         "sub": user_id,
         "org": organization_id,
         "type": token_type,
+        "ver": version,
         "iat": now,
         "exp": expires,
     }

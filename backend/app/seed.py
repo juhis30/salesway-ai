@@ -21,7 +21,7 @@ from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from app.analytics.periods import add_months, month_start, org_today
-from app.core.database import SessionLocal
+from app.core.database import system_session
 from app.core.security import hash_password
 from app.ml.train import train_organization
 from app.models import ImportEntity, Organization, Role, SalesOrder, Team, Territory, User
@@ -406,7 +406,7 @@ def _csv_bytes(rows: list[dict]) -> bytes:
 
 
 def seed(reset: bool = False) -> None:
-    db = SessionLocal()
+    db = system_session()
     try:
         existing = db.scalar(select(Organization).where(Organization.name == ORG_NAME))
         if existing and not reset:

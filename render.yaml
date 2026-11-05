@@ -1,6 +1,6 @@
 # Render Blueprint: the API and the web app as two free web services.
 # The database is Neon Postgres; its connection string is entered once in Render (DATABASE_URL).
-# Every push to main redeploys both. See docs/deployment.md.
+# Every push to main redeploys both, once the CI checks pass. See docs/deployment.md.
 
 services:
   - type: web
@@ -13,7 +13,7 @@ services:
     # Applies any new database migrations, then starts the API.
     startCommand: alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /health
-    autoDeploy: true
+    autoDeployTrigger: checksPass
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.10
@@ -59,7 +59,7 @@ services:
     rootDir: frontend
     buildCommand: npm ci && npm run build
     startCommand: npm start
-    autoDeploy: true
+    autoDeployTrigger: checksPass
     envVars:
       - key: NODE_VERSION
         value: "22"

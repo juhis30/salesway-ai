@@ -37,6 +37,8 @@ API docs are at **http://localhost:8000/docs**. To call protected endpoints ther
 
 ### Demo logins (password `Demo@12345`)
 
+The demo organisation's passwords can't be changed and it has no lockout, because everyone shares them.
+
 | Email                     | Role             | Sees                          |
 | ------------------------- | ---------------- | ----------------------------- |
 | ananya@shakti-demo.in     | org_admin        | everything, can manage users  |
@@ -54,6 +56,10 @@ API docs are at **http://localhost:8000/docs**. To call protected endpoints ther
 cd backend
 .\.venv\Scripts\python -m pytest -q
 ```
+
+Set `TEST_DATABASE_URL` to an empty Postgres database to run the same tests there, with
+row-level security enforced. CI does both on every push. See [docs/security.md](docs/security.md)
+for how data is kept separate between organisations and how to check it in production.
 
 ## Try your own data
 

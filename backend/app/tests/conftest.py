@@ -1,27 +1,81 @@
+"""Test fixtures.
+
+By default each test gets a fresh in-memory SQLite database. Set TEST_DATABASE_URL to a Postgres
+database to run the same tests there (as CI does): the schema is built once by running the real
+migrations, and each test runs inside a transaction that is rolled back afterwards.
+"""
+
+import os
 import warnings
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.exc import SAWarning
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
 import app.models  # noqa: F401
-from app.core.database import Base, get_db, make_engine
+from app.core.config import Settings
+from app.core.database import Base, _reapply, get_db, make_engine
 from app.main import app
 
 # SQLite stores Numeric as float internally; harmless for tests, noisy in output.
 warnings.filterwarnings("ignore", category=SAWarning, message=".*Decimal objects natively.*")
 
 PASSWORD = "Secret@123"
+POSTGRES_URL = Settings(database_url=os.environ["TEST_DATABASE_URL"]).database_url if os.environ.get("TEST_DATABASE_URL") else None
+
+
+@pytest.fixture(scope="session")
+def postgres_engine():
+    from alembic import command
+    from alembic.config import Config
+    from sqlalchemy import text
+
+    engine = make_engine(POSTGRES_URL)
+    with engine.begin() as conn:  # start from an empty schema every run
+        conn.execute(text("DROP SCHEMA public CASCADE; CREATE SCHEMA public"))
+    config = Config(str(Path(__file__).resolve().parents[2] / "alembic.ini"))
+    config.set_main_option("script_location", str(Path(__file__).resolve().parents[2] / "migrations"))
+    config.set_main_option("sqlalchemy.url", POSTGRES_URL.replace("%", "%%"))
+    command.upgrade(config, "head")
+    # Superusers (and roles with BYPASSRLS) skip row-level security entirely, so tests run as an
+    # ordinary role, like the app should in production. Migrations above ran as the owner.
+    with engine.begin() as conn:
+        conn.execute(text("""
+            DO $$ BEGIN
+              IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'salesway_app') THEN
+                CREATE ROLE salesway_app NOLOGIN NOSUPERUSER NOBYPASSRLS;
+              END IF;
+            END $$;
+            GRANT USAGE ON SCHEMA public TO salesway_app;
+            GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO salesway_app;
+        """))
+    yield engine
+    engine.dispose()
 
 
 @pytest.fixture
-def db_session():
+def db_session(request):
+    if POSTGRES_URL:
+        engine = request.getfixturevalue("postgres_engine")
+        connection = engine.connect()
+        outer = connection.begin()
+        connection.exec_driver_sql("SET ROLE salesway_app")  # for this transaction; RLS now applies
+        # App code commits freely; those commits become savepoints inside this rolled-back transaction.
+        session = Session(bind=connection, join_transaction_mode="create_savepoint", autoflush=False, expire_on_commit=False)
+        # The test's own setup and assertions see every organisation; each API request it makes
+        # starts with no organisation (see `client`), as in production, so RLS is really exercised.
+        session.info["bypass_rls"] = True
+        yield session
+        session.close()
+        outer.rollback()
+        connection.close()
+        return
     engine = make_engine("sqlite://", poolclass=StaticPool)
     Base.metadata.create_all(engine)
-    Session = sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
-    session = Session()
+    session = sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)()
     yield session
     session.close()
     engine.dispose()
@@ -29,7 +83,19 @@ def db_session():
 
 @pytest.fixture
 def client(db_session):
-    app.dependency_overrides[get_db] = lambda: db_session
+    def request_session():
+        # Like a fresh production session: no organisation, no bypass, until the request sets one.
+        saved = dict(db_session.info)
+        db_session.info.update(org_id=None, bypass_rls=False)
+        _reapply(db_session)
+        try:
+            yield db_session
+        finally:
+            db_session.info.clear()
+            db_session.info.update(saved)
+            _reapply(db_session)
+
+    app.dependency_overrides[get_db] = request_session
     with TestClient(app) as test_client:
         yield test_client
     app.dependency_overrides.clear()

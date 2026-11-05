@@ -135,6 +135,9 @@ export type Role =
   | "sales_executive"
   | "analyst";
 
+// Mirrors the backend rule in app/core/passwords.py, which has the final say.
+export const PASSWORD_HINT = "At least 10 characters, with letters and numbers. Avoid common passwords and your email.";
+
 export const ROLE_LABELS: Record<Role, string> = {
   super_admin: "Super admin",
   org_admin: "Organisation admin",

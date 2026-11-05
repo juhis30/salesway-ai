@@ -11,7 +11,9 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 target_metadata = Base.metadata
-database_url = get_settings().database_url
+# Tests (and tools) can point Alembic at another database with config.set_main_option("sqlalchemy.url", ...).
+settings = get_settings()
+database_url = config.get_main_option("sqlalchemy.url") or settings.migration_database_url or settings.database_url
 
 
 def run_migrations_offline() -> None:

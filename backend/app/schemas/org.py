@@ -1,7 +1,9 @@
 import uuid
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
+
+from app.core.passwords import password_problem
 
 from app.models import Role
 
@@ -70,6 +72,16 @@ class UserCreate(BaseModel):
     phone: str | None = Field(default=None, pattern=r"^\+[1-9]\d{7,14}$")
     team_id: uuid.UUID | None = None
     territory_id: uuid.UUID | None = None
+
+    @model_validator(mode="after")
+    def strong_password(self):
+        if problem := password_problem(self.password, self.email):
+            raise ValueError(problem)
+        return self
+
+
+class PasswordReset(BaseModel):
+    new_password: str = Field(max_length=72)
 
 
 class UserUpdate(BaseModel):

@@ -17,8 +17,11 @@ class Settings(BaseSettings):
     # SQLite for the local demo. A Postgres URL as hosts give it (postgres://... or
     # postgresql://..., e.g. from Neon) is used as-is with the psycopg driver.
     database_url: str = "sqlite:///./salesway.db"
+    # Optional separate login for migrations (the table owner) when DATABASE_URL is a restricted
+    # role that row-level security applies to. See docs/security.md.
+    migration_database_url: str = ""
 
-    @field_validator("database_url")
+    @field_validator("database_url", "migration_database_url")
     @classmethod
     def use_psycopg_driver(cls, value: str) -> str:
         for prefix in ("postgres://", "postgresql://"):
@@ -48,6 +51,9 @@ class Settings(BaseSettings):
     whatsapp_api_version: str = "v21.0"
 
     assistant_rate_limit_per_minute: int = 30
+
+    # Optional error tracking (sentry.io); nothing is sent when empty.
+    sentry_dsn: str = ""
 
     # --- CRM connections (read-only) ---------------------------------------------------------
     # Public addresses: OAuth sends people back to the API's callback, which then returns them to the web app.

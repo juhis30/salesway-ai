@@ -129,13 +129,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <option value="dark">Dark</option>
             </select>
           </label>
-          <div className="flex items-center gap-3">
+          <Link href="/account" className="-mx-2 flex items-center gap-3 rounded-lg px-2 py-1 hover:bg-surface-2" title="Your account and password">
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-2 text-xs font-semibold">{initials}</span>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium">{me.user.full_name}</p>
-              <p className="truncate text-xs text-muted">{ROLE_LABELS[me.user.role]}</p>
+              <p className="truncate text-xs text-muted">{ROLE_LABELS[me.user.role]} · Account</p>
             </div>
-          </div>
+          </Link>
           <button
             className="btn-ghost w-full"
             onClick={() => {

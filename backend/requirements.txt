@@ -1,21 +1,22 @@
-fastapi==0.115.6
-uvicorn[standard]==0.34.0
+fastapi==0.162.0
+uvicorn[standard]==0.54.0
 sqlalchemy==2.0.36
 alembic==1.14.0
 psycopg[binary]==3.2.13  # PostgreSQL (hosted database)
 pydantic==2.10.4
 pydantic-settings==2.7.1
 email-validator==2.2.0
-pyjwt==2.10.1
+pyjwt==2.15.0
 bcrypt==4.2.1
-python-multipart==0.0.20
+python-multipart==0.0.31
 pandas==2.2.3
 openpyxl==3.1.5
 tzdata==2024.2
 httpx==0.28.1        # WhatsApp and CRM API calls
-cryptography==44.0.0 # encrypts stored CRM credentials
+cryptography==50.0.0 # encrypts stored CRM credentials
+sentry-sdk[fastapi]==2.19.2  # optional error tracking (SENTRY_DSN)
 anthropic==2.3.0     # only used when LLM_PROVIDER=anthropic
 scikit-learn==1.7.2  # predictive models (brings numpy, scipy)
 
 # tests
-pytest==8.3.4
+pytest==9.2.0

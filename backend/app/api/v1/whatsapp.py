@@ -171,7 +171,7 @@ def simulate(body: SimulateIn, admin: User = Depends(admin_only), db: Session = 
     if target is None or target.organization_id != admin.organization_id:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "User not found")
     if not target.phone:
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "Add a WhatsApp number to this user first")
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "Add a WhatsApp number to this user first")
 
     capture = MockSender()
     inbound = Inbound(phone_number_id="simulator", from_phone=target.phone, message_id=f"sim.{uuid.uuid4().hex}",
