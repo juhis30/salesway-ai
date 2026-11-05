@@ -16,7 +16,7 @@ httpx==0.28.1        # WhatsApp and CRM API calls
 cryptography==50.0.0 # encrypts stored CRM credentials
 sentry-sdk[fastapi]==2.19.2  # optional error tracking (SENTRY_DSN)
 anthropic==2.3.0     # only used when LLM_PROVIDER=anthropic
-scikit-learn==1.7.2  # predictive models (brings numpy, scipy)
+scikit-learn==1.9.1  # predictive models (brings numpy, scipy)
 
 # tests
 pytest==9.2.0
