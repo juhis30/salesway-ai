@@ -32,7 +32,7 @@ ACTIVITIES = (
     "2026-10-20,ravi@acme.in,visit,C1,,done,\n"                      # no order within 7 days
     "2026-10-10,ravi@acme.in,call,C1,,done,\n"
     "2026-10-28,ravi@acme.in,Phone Call,C1,,planned,Follow up\n"     # overdue on 2 Nov
-    "2026-11-10,sita@acme.in,visit,C2,,scheduled,\n"                 # upcoming
+    "2099-11-10,sita@acme.in,visit,C2,,scheduled,\n"                 # upcoming (far future, so it never turns overdue)
     "2026-10-03,ravi@acme.in,visit,C1,,done,\n"                      # duplicate row
 )
 
