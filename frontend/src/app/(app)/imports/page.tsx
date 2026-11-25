@@ -325,7 +325,7 @@ function Importer() {
                     <td className="td">
                       <span className="inline-flex items-center gap-1.5">
                         <StatusIcon status={j.status === "completed" ? "good" : j.status === "failed" ? "critical" : "warning"} />
-                        {j.status === "previewed" ? "Not confirmed" : j.status === "completed" ? "Imported" : "Failed"}
+                        {j.status === "previewed" ? "Not confirmed" : j.status === "completed" ? "Imported" : j.status === "expired" ? "Expired, upload again" : "Failed"}
                       </span>
                     </td>
                     <td className="td text-right">{j.valid_rows.toLocaleString("en-IN")}</td>

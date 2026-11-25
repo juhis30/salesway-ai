@@ -6,6 +6,7 @@ import { ForecastChart } from "@/components/ForecastChart";
 import { Badge, Empty, ErrorBox, SectionCard, Skeleton, StatTile, useApi, type Status } from "@/components/ui";
 import {
   api,
+  runJob,
   type ActionKind,
   type MLModelInfo,
   type MonthEndForecast,
@@ -303,7 +304,7 @@ function Models({ models, canTrain, onTrained }: { models: MLModelInfo[] | null;
     setBusy(true);
     setError(null);
     try {
-      await api("/ml/train", { method: "POST" });
+      await runJob("/ml/train");
       onTrained();
     } catch (err) {
       setError((err as Error).message);

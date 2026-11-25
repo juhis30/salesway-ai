@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { api, clearTokens, hasSession, LOGOUT_EVENT, setTokens, type Me, type Role } from "./api";
+import { api, clearTokens, endSession, hasSession, LOGOUT_EVENT, setTokens, type Me, type Role } from "./api";
 
 interface RegisterInput {
   organization_name: string;
@@ -42,7 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [loadMe]);
 
   const logout = useCallback(() => {
-    clearTokens();
+    endSession();
     setMe(null);
   }, []);
 

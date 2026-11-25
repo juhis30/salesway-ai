@@ -31,6 +31,19 @@ export function setTokens(tokens: { access_token: string; refresh_token: string 
   }
 }
 
+// Signing out: tell the server, so this device's refresh token stops working everywhere it was copied.
+export function endSession() {
+  const refresh_token = read(REFRESH_KEY);
+  clearTokens();
+  if (refresh_token) {
+    fetch(`${API_URL}/auth/logout`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refresh_token }),
+    }).catch(() => {});
+  }
+}
+
 export function clearTokens() {
   try {
     localStorage.removeItem(ACCESS_KEY);
@@ -128,6 +141,36 @@ export async function api<T>(path: string, options: RequestOptions = {}, retry =
     throw new ApiError(res.status, errorMessage(data, res.status));
   }
   return res.status === 204 ? (undefined as T) : res.json();
+}
+
+// --- Background jobs ------------------------------------------------------------------------
+
+export interface QueuedJob<R = Record<string, unknown>> {
+  id: string;
+  kind: string;
+  status: "queued" | "running" | "succeeded" | "failed";
+  created_at: string;
+  started_at: string | null;
+  finished_at: string | null;
+  result: R | null;
+  error: string | null;
+}
+
+const JOB_POLL_MS = 1500;
+const JOB_TIMEOUT_MS = 15 * 60 * 1000;
+
+// Slow work (a CRM sync, retraining) runs on the server in the background: start it, then check
+// every 1.5 seconds until it has finished. Throws with the server's message if it failed.
+export async function runJob<R>(path: string): Promise<R> {
+  let job = await api<QueuedJob<R>>(path, { method: "POST" });
+  const deadline = Date.now() + JOB_TIMEOUT_MS;
+  while (job.status === "queued" || job.status === "running") {
+    if (Date.now() > deadline) throw new ApiError(0, "This is taking longer than expected. Check back in a few minutes.");
+    await new Promise((resolve) => setTimeout(resolve, JOB_POLL_MS));
+    job = await api<QueuedJob<R>>(`/jobs/${job.id}`);
+  }
+  if (job.status === "failed") throw new ApiError(500, job.error ?? "This didn't finish. Please try again.");
+  return job.result as R;
 }
 
 // --- Types mirroring backend schemas ------------------------------------------------------
@@ -559,6 +602,14 @@ export interface Provider {
   integration: IntegrationInfo | null;
 }
 
+// What a finished sync job reports back (the full record is in the connection's history).
+export interface SyncResult {
+  sync_job_id: string;
+  status: "succeeded" | "partial" | "failed";
+  records: number;
+  message: string | null;
+}
+
 export interface SyncJobInfo {
   id: string;
   trigger: "manual" | "scheduled" | "webhook";
@@ -620,7 +671,7 @@ export interface ImportJob {
   id: string;
   entity: ImportEntity;
   filename: string;
-  status: "previewed" | "completed" | "failed";
+  status: "previewed" | "completed" | "failed" | "expired";
   total_rows: number;
   valid_rows: number;
   error_rows: number;

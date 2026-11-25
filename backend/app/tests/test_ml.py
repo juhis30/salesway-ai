@@ -165,9 +165,19 @@ def test_cross_sell_needs_most_similar_customers_to_buy_it():
 # --- End to end ----------------------------------------------------------------------------------
 
 
-def test_small_organisations_get_honest_answers(client, sales_org):
+def train_and_wait(client, run_jobs, headers) -> dict:
+    """Retraining runs in the background: queue it, let the worker run it, return its summary."""
+    queued = client.post("/api/v1/ml/train", headers=headers)
+    assert queued.status_code == 202
+    run_jobs()
+    job = client.get(f"/api/v1/jobs/{queued.json()['id']}", headers=headers).json()
+    assert job["status"] == "succeeded", job
+    return job["result"]
+
+
+def test_small_organisations_get_honest_answers(client, run_jobs, sales_org):
     admin = sales_org["admin"]
-    summary = client.post("/api/v1/ml/train", headers=admin).json()
+    summary = train_and_wait(client, run_jobs, admin)
     assert summary["month_end_forecast"] == "insufficient_data"
     assert summary["churn"] == "insufficient_data"
     assert summary["deal_win"] == "insufficient_data"
@@ -187,7 +197,7 @@ def demo(client, db_session):
             "amit": auth_headers(client, "amit@shakti-demo.in", "Demo@12345")}
 
 
-def test_demo_company_end_to_end(client, db_session, demo):
+def test_demo_company_end_to_end(client, db_session, run_jobs, demo):
     s = demo["summary"]
     assert s["month_end_forecast"] == "active"
     assert s["churn"] in ("active", "rejected") and s["deal_win"] in ("active", "rejected")
@@ -212,7 +222,7 @@ def test_demo_company_end_to_end(client, db_session, demo):
     # Done actions aren't suggested again on the next training run.
     done = mine[0]
     assert client.patch(f"/api/v1/recommendations/{done['id']}", headers=demo["amit"], json={"status": "done"}).status_code == 204
-    client.post("/api/v1/ml/train", headers=auth_headers(client, "ananya@shakti-demo.in", "Demo@12345"))
+    train_and_wait(client, run_jobs, auth_headers(client, "ananya@shakti-demo.in", "Demo@12345"))
     again = client.get("/api/v1/recommendations", headers=demo["amit"]).json()
     assert done["entity_id"] not in {r["entity_id"] for r in again if r["kind"] == done["kind"]}
 

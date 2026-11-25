@@ -1,8 +1,10 @@
 import json
 import logging
 import uuid
+from dataclasses import asdict
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import select
@@ -10,13 +12,13 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
-from app.core.database import get_db
+from app.core.database import get_db, set_tenant
 from app.core.deps import require_roles
 from app.integrations.whatsapp import service
 from app.integrations.whatsapp.meta import Inbound, parse_webhook, signature_valid
 from app.integrations.whatsapp.sender import MockSender, get_sender
 from app.models import ADMIN_ROLES, Role, User, WhatsAppAccount
-from app.services import audit
+from app.services import audit, jobs
 
 log = logging.getLogger(__name__)
 router = APIRouter(tags=["whatsapp"])
@@ -40,10 +42,16 @@ def verify_webhook(
 
 @router.post("/webhooks/whatsapp", include_in_schema=False)
 async def receive_webhook(request: Request, db: Session = Depends(get_db)):
-    settings = get_settings()
+    # Only reading the body is async; the database work runs in a worker thread so it never blocks
+    # other requests. Answers are queued as jobs, so Meta gets its 200 straight away.
     body = await request.body()
+    return await run_in_threadpool(_receive, db, body, request.headers.get("X-Hub-Signature-256"))
+
+
+def _receive(db: Session, body: bytes, signature: str | None) -> dict:
+    settings = get_settings()
     if settings.whatsapp_app_secret:
-        if not signature_valid(body, request.headers.get("X-Hub-Signature-256"), settings.whatsapp_app_secret):
+        if not signature_valid(body, signature, settings.whatsapp_app_secret):
             raise HTTPException(status.HTTP_403_FORBIDDEN, "Invalid signature")
     elif settings.environment != "development":
         raise HTTPException(status.HTTP_403_FORBIDDEN, "WHATSAPP_APP_SECRET is not configured")
@@ -56,19 +64,16 @@ async def receive_webhook(request: Request, db: Session = Depends(get_db)):
         raise HTTPException(status.HTTP_400_BAD_REQUEST, "Invalid JSON") from None
 
     messages, statuses = parse_webhook(payload)
-    sender = get_sender()
-    # Processed inline for simplicity. Answers take well under Meta's timeout with the rule-based
-    # assistant; with an LLM in production, queue these instead. Duplicates are safe either way.
     for inbound in messages:
         account = service.account_for(db, inbound.phone_number_id)
         if account is None:
             log.warning("WhatsApp message for unknown phone_number_id %s ignored", inbound.phone_number_id)
             continue
-        try:
-            service.handle_message(db, account.organization_id, account.phone_number_id, inbound, sender)
-        except Exception:
-            db.rollback()
-            log.exception("Failed to handle WhatsApp message %s", inbound.message_id)
+        set_tenant(db, account.organization_id)
+        # Meta retries deliveries; one job per message id. Answering is also idempotent.
+        jobs.enqueue(db, account.organization_id, "whatsapp_message", {"inbound": asdict(inbound)},
+                     dedupe_key=f"whatsapp:{inbound.message_id}"[:120] if inbound.message_id else None)
+    db.commit()
     for update in statuses:
         service.apply_status(db, update)
     db.commit()

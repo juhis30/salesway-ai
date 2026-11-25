@@ -1,3 +1,4 @@
+import hmac
 import json
 import logging
 import uuid
@@ -6,6 +7,7 @@ from urllib.parse import urlencode
 
 import jwt
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request, status
+from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 from sqlalchemy import select
@@ -16,7 +18,8 @@ from app.core.database import get_db, rls_bypass, set_tenant
 from app.core.deps import require_roles
 from app.integrations.crm import base
 from app.integrations.crm.hubspot import verify_signature
-from app.integrations.crm.sync import CONNECTORS, default_http, run_sync, sync_due
+from app.api.v1.jobs import JobOut as QueuedJobOut
+from app.integrations.crm.sync import CONNECTORS, default_http, queue_sync, sync_due
 from app.models import ADMIN_ROLES, Integration, SyncJob, User
 from app.services import audit
 
@@ -151,10 +154,13 @@ def _back(web: str, **params: str) -> RedirectResponse:
     return RedirectResponse(f"{web}/integrations?{urlencode(params)}")
 
 
-@router.post("/integrations/{integration_id}/sync", response_model=JobOut)
+@router.post("/integrations/{integration_id}/sync", response_model=QueuedJobOut, status_code=status.HTTP_202_ACCEPTED)
 def sync_now(integration_id: uuid.UUID, user: User = Depends(admin_only), db: Session = Depends(get_db)):
+    """Start a sync in the background. Poll GET /jobs/{id}; the result names the sync job."""
     integration = _own_integration(db, user, integration_id)
-    return run_sync(db, integration, trigger="manual")
+    job = queue_sync(db, integration, "manual", user.id)
+    db.commit()
+    return job
 
 
 @router.get("/integrations/{integration_id}/jobs", response_model=list[JobOut])
@@ -179,30 +185,37 @@ def disconnect(integration_id: uuid.UUID, user: User = Depends(admin_only), db: 
 def scheduled_sync(x_sync_token: str = Header(default=""), db: Session = Depends(get_db)):
     """Called by a scheduler (e.g. GitHub Actions every hour) with the SYNC_CRON_TOKEN."""
     expected = get_settings().sync_cron_token
-    if not expected or x_sync_token != expected:
+    if not expected or not hmac.compare_digest(x_sync_token.encode(), expected.encode()):
         raise HTTPException(status.HTTP_403_FORBIDDEN, "Not allowed")
-    done = sync_due(db)
-    return {"synced": len(done), "statuses": [j.status for j in done]}
+    return {"queued": len(sync_due(db))}
 
 
 @router.post("/webhooks/hubspot", include_in_schema=False)
 async def hubspot_webhook(request: Request, db: Session = Depends(get_db)):
-    """HubSpot tells us records changed; sync that portal's connection (changed records only)."""
-    secret = get_settings().hubspot_client_secret
+    """HubSpot tells us records changed; queue a sync of that portal's connection (changed records only).
+
+    Only reading the body is async. The database work runs in a worker thread so it never blocks
+    other requests, and the sync itself runs later in the job queue, so HubSpot gets its reply fast.
+    """
     body = await request.body()
-    if not secret or not verify_signature(secret, "POST", str(request.url), body,
-                                          request.headers.get("X-HubSpot-Request-Timestamp", ""),
-                                          request.headers.get("X-HubSpot-Signature-v3", "")):
+    return await run_in_threadpool(_hubspot_changes, db, str(request.url), body, request.headers)
+
+
+def _hubspot_changes(db: Session, url: str, body: bytes, headers) -> dict:
+    secret = get_settings().hubspot_client_secret
+    if not secret or not verify_signature(secret, "POST", url, body,
+                                          headers.get("X-HubSpot-Request-Timestamp", ""),
+                                          headers.get("X-HubSpot-Signature-v3", "")):
         raise HTTPException(status.HTTP_403_FORBIDDEN, "Invalid signature")
     try:
         portals = {str(e.get("portalId")) for e in json.loads(body)}
     except (ValueError, AttributeError, TypeError):
         raise HTTPException(status.HTTP_400_BAD_REQUEST, "Invalid payload") from None
-    synced = 0
+    queued = 0
     with rls_bypass(db):  # find which organisation's connection this portal belongs to
-        hubspot = list(db.scalars(select(Integration).where(Integration.provider == "hubspot")))
-    for integration in hubspot:
-        if (integration.settings or {}).get("portal_id") in portals and integration.status != "needs_reconnect":
-            run_sync(db, integration, trigger="webhook")
-            synced += 1
-    return {"synced": synced}
+        for integration in list(db.scalars(select(Integration).where(Integration.provider == "hubspot"))):
+            if (integration.settings or {}).get("portal_id") in portals and integration.status != "needs_reconnect":
+                queue_sync(db, integration, "webhook")
+                queued += 1
+        db.commit()
+    return {"queued": queued}

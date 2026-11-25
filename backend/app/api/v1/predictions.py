@@ -11,11 +11,11 @@ from sqlalchemy.orm import Session
 from app.analytics import service
 from app.analytics.periods import org_today
 from app.api.v1.analytics import get_filters
+from app.api.v1.jobs import JobOut as QueuedJobOut
 from app.core.database import get_db
 from app.core.deps import get_current_org, get_current_user, require_roles
 from app.ml import serving
 from app.ml.recommend import KIND_ORDER
-from app.ml.train import train_organization
 from app.models import (
     ORG_WIDE_ROLES,
     Customer,
@@ -26,7 +26,7 @@ from app.models import (
     Role,
     User,
 )
-from app.services import audit
+from app.services import audit, jobs
 from app.services.access import salesperson_scope
 
 router = APIRouter(tags=["predictions"])
@@ -59,14 +59,16 @@ def models(user: User = Depends(get_current_user), db: Session = Depends(get_db)
     return out
 
 
-@router.post("/ml/train")
-def train(user: User = Depends(can_train), org: Organization = Depends(get_current_org), db: Session = Depends(get_db)):
-    """Retrain every model on the latest data and refresh predictions and suggested actions."""
-    summary = train_organization(db, org)
-    audit.record(db, org.id, user.id, "ml.trained", "organization", org.id,
-                 {k: v for k, v in summary.items() if isinstance(v, str)})
+@router.post("/ml/train", response_model=QueuedJobOut, status_code=status.HTTP_202_ACCEPTED)
+def train(user: User = Depends(can_train), db: Session = Depends(get_db)):
+    """Retrain every model on the latest data and refresh predictions and suggested actions.
+
+    Runs in the background; poll GET /jobs/{id}. Its result is the training summary.
+    """
+    job = jobs.enqueue(db, user.organization_id, "ml_train", dedupe_key=f"ml_train:{user.organization_id}",
+                       created_by_id=user.id)
     db.commit()
-    return summary
+    return job
 
 
 # --- Forecasts ----------------------------------------------------------------------------------

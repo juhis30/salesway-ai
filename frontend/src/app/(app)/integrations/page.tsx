@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Badge, Empty, ErrorBox, SectionCard, Skeleton, useApi, type Status } from "@/components/ui";
-import { api, type Provider, type SyncJobInfo } from "@/lib/api";
+import { api, runJob, type Provider, type SyncJobInfo, type SyncResult } from "@/lib/api";
 import { isAdmin, useAuth } from "@/lib/auth";
 
 const ENTITY_LABELS: Record<string, string> = {
@@ -129,9 +129,9 @@ function Integrations() {
                       className="btn-primary"
                       disabled={busy !== null}
                       onClick={() => act(`sync-${p.provider}`, async () => {
-                        const job = await api<SyncJobInfo>(`/integrations/${p.integration!.id}/sync`, { method: "POST" });
-                        setNotice({ kind: job.status === "failed" ? "critical" : "good",
-                                    text: job.status === "failed" ? job.message ?? "Sync failed" : `${p.label}: ${job.records} records received.` });
+                        const sync = await runJob<SyncResult>(`/integrations/${p.integration!.id}/sync`);
+                        setNotice({ kind: sync.status === "failed" ? "critical" : "good",
+                                    text: sync.status === "failed" ? sync.message ?? "Sync failed" : `${p.label}: ${sync.records} records received.` });
                       })}
                     >
                       {busy === `sync-${p.provider}` ? "Syncing…" : "Sync now"}

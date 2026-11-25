@@ -67,6 +67,10 @@ Render's free plan has no scheduler, so `.github/workflows/crm-sync.yml` calls
 `SYNC_CRON_TOKEN` into the GitHub repository secret of the same name. Connections synced within
 `SYNC_INTERVAL_MINUTES` (default 60) are skipped. Locally: run `sync_due` from Python, or use **Sync now**.
 
+Every sync, whether from **Sync now**, the schedule or a HubSpot webhook, runs as a background job
+(see [security.md](security.md#background-jobs)). While a connection has a sync waiting or running,
+new requests return that same job instead of starting another.
+
 ## Not verified yet
 
 The connectors are written to each CRM's published REST API and tested against simulated responses

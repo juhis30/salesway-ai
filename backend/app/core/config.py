@@ -30,11 +30,30 @@ class Settings(BaseSettings):
         return value
 
     jwt_secret: str = DEFAULT_JWT_SECRET
+    # To rotate JWT_SECRET without signing everyone out: move the old value here, set a new
+    # JWT_SECRET, and remove the old one once refresh tokens signed with it have expired (7 days).
+    jwt_previous_secrets: list[str] = []
     jwt_algorithm: str = "HS256"
     access_token_minutes: int = 30
     refresh_token_days: int = 7
 
     cors_origins: list[str] = ["http://localhost:3000"]
+    # Interactive API docs at /docs. On by default only in development.
+    api_docs: bool | None = None
+
+    @property
+    def api_docs_enabled(self) -> bool:
+        return self.api_docs if self.api_docs is not None else self.environment == "development"
+
+    # Run queued jobs (CRM syncs, model training, WhatsApp replies) in a thread of the API process.
+    # Turn off when a separate worker runs `python -m app.worker`.
+    run_worker: bool = True
+    # Uploaded files that were previewed but never imported are deleted after this many days.
+    import_preview_days: int = 7
+
+    # Per IP address; shared by all server processes (stored in the database).
+    login_rate_limit_per_minute: int = 30
+    register_rate_limit_per_hour: int = 10
 
     max_upload_mb: int = 10
 
@@ -60,6 +79,8 @@ class Settings(BaseSettings):
     public_api_url: str = "http://localhost:8000"
     public_web_url: str = "http://localhost:3000"
     # Encrypts stored CRM credentials. Any long random string; falls back to JWT_SECRET if unset.
+    # To rotate: put the new key first and keep the old one after a comma ("new,old"). Each sync
+    # re-encrypts with the new key; remove the old one once every connection has synced.
     credentials_key: str = ""
     # Lets an external scheduler (e.g. GitHub Actions) trigger due syncs; disabled when empty.
     sync_cron_token: str = ""

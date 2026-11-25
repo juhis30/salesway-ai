@@ -162,3 +162,69 @@ def test_role_change_signs_the_user_out(client):
     rep_headers = auth_headers(client, "rep@acme.in")
     client.patch(f"/api/v1/users/{rep['id']}", headers=admin, json={"role": "sales_executive"})
     assert client.get("/api/v1/auth/me", headers=rep_headers).status_code == 401
+
+
+def test_refresh_tokens_work_once(client, db_session):
+    from datetime import datetime, timedelta, timezone
+
+    from app.models import RefreshToken
+
+    register_org(client, "Acme", "admin@acme.in")
+    first = client.post("/api/v1/auth/login", json={"email": "admin@acme.in", "password": PASSWORD}).json()
+    second = client.post("/api/v1/auth/refresh", json={"refresh_token": first["refresh_token"]})
+    assert second.status_code == 200
+    # Two tabs refreshing together present the same token; a second use moments later still works.
+    assert client.post("/api/v1/auth/refresh", json={"refresh_token": first["refresh_token"]}).status_code == 200
+
+    # Much later, the old token coming back means someone kept a copy: every session ends.
+    for record in db_session.scalars(select(RefreshToken).where(RefreshToken.used_at.is_not(None))):
+        record.used_at = datetime.now(timezone.utc) - timedelta(minutes=5)
+    db_session.flush()
+    assert client.post("/api/v1/auth/refresh", json={"refresh_token": first["refresh_token"]}).status_code == 401
+    newest = second.json()
+    assert client.get("/api/v1/auth/me", headers={"Authorization": f"Bearer {newest['access_token']}"}).status_code == 401
+    assert client.post("/api/v1/auth/refresh", json={"refresh_token": newest["refresh_token"]}).status_code == 401
+    assert client.post("/api/v1/auth/login", json={"email": "admin@acme.in", "password": PASSWORD}).status_code == 200
+
+
+def test_sign_out_ends_only_this_device(client):
+    register_org(client, "Acme", "admin@acme.in")
+    login = {"email": "admin@acme.in", "password": PASSWORD}
+    laptop = client.post("/api/v1/auth/login", json=login).json()
+    phone = client.post("/api/v1/auth/login", json=login).json()
+    swapped = client.post("/api/v1/auth/refresh", json={"refresh_token": laptop["refresh_token"]}).json()
+
+    assert client.post("/api/v1/auth/logout", json={"refresh_token": swapped["refresh_token"]}).status_code == 204
+    # The laptop's whole chain of refresh tokens stops working; the phone carries on.
+    assert client.post("/api/v1/auth/refresh", json={"refresh_token": swapped["refresh_token"]}).status_code == 401
+    assert client.post("/api/v1/auth/refresh", json={"refresh_token": phone["refresh_token"]}).status_code == 200
+    # Signing out with a bad token is harmless.
+    assert client.post("/api/v1/auth/logout", json={"refresh_token": "nonsense"}).status_code == 204
+
+
+def test_sign_in_attempts_are_limited_per_address(client, monkeypatch):
+    from app.api.v1 import auth
+
+    monkeypatch.setattr(auth.login_limiter, "limit", 3)
+    attempt = {"email": "nobody@acme.in", "password": "Wrong@12345"}
+    for _ in range(3):
+        assert client.post("/api/v1/auth/login", json=attempt).status_code == 401
+    blocked = client.post("/api/v1/auth/login", json=attempt)
+    assert blocked.status_code == 429 and "Retry-After" in blocked.headers
+
+    monkeypatch.setattr(auth.register_limiter, "limit", 1)
+    register_org(client, "Acme", "admin@acme.in")
+    again = client.post("/api/v1/auth/register", json={"organization_name": "Bharat Traders", "full_name": "Bina Rao", "email": "bina@bharat.in", "password": PASSWORD})
+    assert again.status_code == 429
+
+
+def test_tokens_survive_a_secret_rotation(client, monkeypatch):
+    from app.core.config import get_settings
+
+    headers = register_org(client, "Acme", "admin@acme.in")
+    settings = get_settings()
+    monkeypatch.setattr(settings, "jwt_previous_secrets", [settings.jwt_secret])
+    monkeypatch.setattr(settings, "jwt_secret", "a-brand-new-secret-for-signing-tokens")
+    assert client.get("/api/v1/auth/me", headers=headers).status_code == 200  # signed with the old secret
+    monkeypatch.setattr(settings, "jwt_previous_secrets", [])
+    assert client.get("/api/v1/auth/me", headers=headers).status_code == 401  # old secret retired

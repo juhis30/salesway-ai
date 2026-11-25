@@ -16,8 +16,8 @@ from app.integrations.crm.hubspot import HubSpotConnector
 from app.integrations.crm.salesforce import SalesforceConnector
 from app.integrations.crm.sandbox import SandboxConnector
 from app.integrations.crm.zoho import ZohoConnector
-from app.models import ImportEntity, Integration, Organization, Role, SyncJob, User
-from app.services import audit, importer
+from app.models import ImportEntity, Integration, Job, Organization, Role, SyncJob, User
+from app.services import audit, importer, jobs
 
 log = logging.getLogger(__name__)
 
@@ -73,6 +73,7 @@ def run_sync(db: Session, integration: Integration, trigger: str = "manual", htt
         integration.last_success_at = started
         integration.last_error = None
         integration.cursors = cursors
+        integration.credentials = base.reencrypt(integration.credentials)  # moves them to the newest key
     except base.AuthError as exc:
         db.rollback()
         job, integration = _after_rollback(db, job, integration)
@@ -105,17 +106,25 @@ def _after_rollback(db: Session, job: SyncJob, integration: Integration) -> tupl
     return failed, integration
 
 
-def sync_due(db: Session, now: datetime | None = None) -> list[SyncJob]:
-    """Sync every working connection that hasn't synced within the interval (for a scheduler)."""
+def queue_sync(db: Session, integration: Integration, trigger: str, user_id=None) -> Job:
+    """Queue a sync of one connection. While one is waiting or running, that one is returned instead."""
+    return jobs.enqueue(db, integration.organization_id, "crm_sync",
+                        {"integration_id": str(integration.id), "trigger": trigger},
+                        dedupe_key=f"crm_sync:{integration.id}", created_by_id=user_id)
+
+
+def sync_due(db: Session, now: datetime | None = None) -> list[Job]:
+    """Queue a sync for every working connection that hasn't synced within the interval (for a scheduler)."""
     now = now or datetime.now(timezone.utc)
     cutoff = now - timedelta(minutes=get_settings().sync_interval_minutes)
-    jobs = []
+    queued = []
     with rls_bypass(db):  # every organisation's connections
         due = list(db.scalars(select(Integration).where(Integration.status.in_(("connected", "error")))))
-    for integration in due:
-        last = integration.last_sync_at
-        if last is not None and last.tzinfo is None:
-            last = last.replace(tzinfo=timezone.utc)
-        if last is None or last < cutoff:
-            jobs.append(run_sync(db, integration, trigger="scheduled"))
-    return jobs
+        for integration in due:
+            last = integration.last_sync_at
+            if last is not None and last.tzinfo is None:
+                last = last.replace(tzinfo=timezone.utc)
+            if last is None or last < cutoff:
+                queued.append(queue_sync(db, integration, "scheduled"))
+        db.commit()
+    return queued

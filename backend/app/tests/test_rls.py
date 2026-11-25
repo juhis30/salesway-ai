@@ -40,7 +40,7 @@ def test_every_tenant_table_is_protected(db_session):
                        WHERE col.table_name = c.relname AND col.column_name = 'organization_id')
                OR c.relname = 'organizations')
     """)).all()
-    assert len(tables) == 21
+    assert len(tables) == 23
     unprotected = [name for name, enabled, forced, policy in tables if not (enabled and forced and policy)]
     assert unprotected == [], f"add these tables to the row-level security migration: {unprotected}"
 

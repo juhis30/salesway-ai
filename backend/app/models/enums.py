@@ -71,3 +71,4 @@ class ImportStatus(str, enum.Enum):
     PREVIEWED = "previewed"
     COMPLETED = "completed"
     FAILED = "failed"
+    EXPIRED = "expired"  # previewed but never imported; the uploaded rows were deleted

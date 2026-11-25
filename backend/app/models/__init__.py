@@ -15,11 +15,16 @@ from app.models.enums import (
 )
 from app.models.imports import ImportJob
 from app.models.integrations import Integration, SyncJob
+from app.models.jobs import ACTIVE_JOB_STATUSES, Job, RateLimitCounter, RefreshToken
 from app.models.ml import MLModel, Prediction, Recommendation
 from app.models.pipeline import Opportunity, SalesActivity
 from app.models.sales import Customer, Product, SalesOrder, SalesOrderItem, SalesTarget
 
 __all__ = [
+    "ACTIVE_JOB_STATUSES",
+    "Job",
+    "RateLimitCounter",
+    "RefreshToken",
     "ADMIN_ROLES",
     "OPEN_STAGES",
     "ORG_WIDE_ROLES",

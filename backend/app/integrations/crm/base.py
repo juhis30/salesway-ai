@@ -18,7 +18,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 
 import httpx
-from cryptography.fernet import Fernet, InvalidToken
+from cryptography.fernet import Fernet, InvalidToken, MultiFernet
 
 from app.core.config import get_settings
 from app.services.importer import SPECS
@@ -61,10 +61,21 @@ class Connection:
 # --- Credential encryption -------------------------------------------------------------------
 
 
-def _fernet() -> Fernet:
+def _fernet() -> MultiFernet:
+    """CREDENTIALS_KEY may list several keys, newest first: encrypt with the first, decrypt with any."""
     s = get_settings()
-    secret = (s.credentials_key or s.jwt_secret).encode()
-    return Fernet(base64.urlsafe_b64encode(hashlib.sha256(secret).digest()))
+    secrets = [k.strip() for k in s.credentials_key.split(",") if k.strip()] or [s.jwt_secret]
+    return MultiFernet([Fernet(base64.urlsafe_b64encode(hashlib.sha256(k.encode()).digest())) for k in secrets])
+
+
+def reencrypt(blob: str | None) -> str | None:
+    """The same credentials, encrypted with the newest key (for key rotation)."""
+    if not blob:
+        return blob
+    try:
+        return _fernet().rotate(blob.encode()).decode()
+    except InvalidToken:
+        return blob
 
 
 def encrypt(tokens: Tokens) -> str:

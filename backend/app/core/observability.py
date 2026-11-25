@@ -115,8 +115,9 @@ def install(app: FastAPI, engine: Engine) -> None:
         code = 200 if status["database"] == "ok" else 503
         return JSONResponse(status_code=code, content={"status": "ok" if code == 200 else "degraded", **status})
 
-    @app.on_event("startup")
-    def warn_if_rls_off():
-        status = database_status(engine)
-        if status.get("row_level_security", "").startswith("NOT ENFORCED"):
-            log.warning("Row-level security is not enforced for this database user; see docs/security.md")
+
+def warn_if_rls_off(engine: Engine) -> None:
+    """Called once at startup (see main.py's lifespan)."""
+    status = database_status(engine)
+    if status.get("row_level_security", "").startswith("NOT ENFORCED"):
+        log.warning("Row-level security is not enforced for this database user; see docs/security.md")

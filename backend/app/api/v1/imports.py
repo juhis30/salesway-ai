@@ -53,7 +53,7 @@ def import_fields(entity: ImportEntity, _: User = Depends(can_import)):
 
 
 @router.post("/{entity}/preview", response_model=PreviewOut, status_code=status.HTTP_201_CREATED)
-async def preview_import(
+def preview_import(
     entity: ImportEntity,
     file: UploadFile = File(...),
     mapping: str | None = Form(default=None, description='Optional JSON: {"field": "File column"}'),
@@ -61,7 +61,8 @@ async def preview_import(
     db: Session = Depends(get_db),
 ):
     limit = get_settings().max_upload_mb * 1024 * 1024
-    content = await file.read(limit + 1)
+    # A plain `def`, so FastAPI runs it in a worker thread: parsing a large file doesn't stall other requests.
+    content = file.file.read(limit + 1)
     if len(content) > limit:
         raise HTTPException(status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, f"File is larger than {get_settings().max_upload_mb} MB")
 
@@ -113,6 +114,8 @@ def _get_job(db: Session, user: User, job_id: uuid.UUID) -> ImportJob:
 @router.post("/{job_id}/confirm", response_model=ImportJobOut)
 def confirm_import(job_id: uuid.UUID, user: User = Depends(can_import), db: Session = Depends(get_db)):
     job = _get_job(db, user, job_id)
+    if job.status == ImportStatus.EXPIRED:
+        raise HTTPException(status.HTTP_409_CONFLICT, "This preview has expired and its rows were deleted. Upload the file again.")
     if job.status != ImportStatus.PREVIEWED:
         raise HTTPException(status.HTTP_409_CONFLICT, f"This import is already {job.status.value}")
 

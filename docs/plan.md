@@ -90,5 +90,9 @@ Key rules carried from the blueprint:
   non-bypass role), login lockout, password rules, change/reset password with sign-out everywhere,
   security headers, request ids and safe error pages, JSON logs, optional Sentry, `/health/ready`,
   CI on SQLite and Postgres with dependency audits, deploy only after checks pass, Dependabot
-- ⏭ httpOnly cookie sessions, a background job queue (instead of syncs and training inside
-  requests), backups with a tested restore, scheduled WhatsApp briefings, billing
+- ✅ Architecture review fixes: background job queue in Postgres (syncs, retraining, WhatsApp
+  replies), no blocking work on the event loop, proxy headers, rate limits in the database with
+  per-IP limits on sign-in, single-use refresh tokens and server-side sign-out, key rotation,
+  retention clean-up, API docs off in production
+- ⏭ httpOnly cookie sessions, analytics rollup tables, SSO/SCIM, backups with a tested restore,
+  scheduled WhatsApp briefings, billing

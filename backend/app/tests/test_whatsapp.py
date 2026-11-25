@@ -16,7 +16,7 @@ RAVI_PHONE = "+919800000001"
 
 
 @pytest.fixture
-def wa(client, sales_org, monkeypatch):
+def wa(client, sales_org, run_jobs, monkeypatch):
     settings = get_settings()
     monkeypatch.setattr(settings, "whatsapp_app_secret", SECRET)
     monkeypatch.setattr(settings, "whatsapp_verify_token", "verify-me")
@@ -26,7 +26,7 @@ def wa(client, sales_org, monkeypatch):
     admin = sales_org["admin"]
     assert client.post("/api/v1/whatsapp/accounts", headers=admin, json={"phone_number_id": "PNID1", "display_phone": "+91 22 1234 5678"}).status_code == 201
     client.patch(f"/api/v1/users/{sales_org['ravi']['id']}", headers=admin, json={"phone": RAVI_PHONE})
-    return {**sales_org, "outbox": outbox}
+    return {**sales_org, "outbox": outbox, "run_jobs": run_jobs}
 
 
 def payload(text=None, sender=RAVI_PHONE, message_id="wamid.1", phone_number_id="PNID1", statuses=None):
@@ -38,10 +38,21 @@ def payload(text=None, sender=RAVI_PHONE, message_id="wamid.1", phone_number_id=
     return {"object": "whatsapp_business_account", "entry": [{"id": "WABA", "changes": [{"field": "messages", "value": value}]}]}
 
 
-def post(client, body: dict, secret=SECRET):
+def deliver(client, body: dict, secret=SECRET):
+    """What Meta does: post the event. Replies are only queued at this point."""
     raw = json.dumps(body).encode()
     return client.post("/api/v1/webhooks/whatsapp", content=raw,
                        headers={"Content-Type": "application/json", "X-Hub-Signature-256": sign(raw, secret)})
+
+
+@pytest.fixture
+def post(client, wa):
+    """Deliver an event, then let the worker answer it."""
+    def deliver_and_answer(_client, body: dict, secret=SECRET):
+        response = deliver(client, body, secret)
+        wa["run_jobs"]()
+        return response
+    return deliver_and_answer
 
 
 def test_webhook_verification(client, wa):
@@ -51,14 +62,14 @@ def test_webhook_verification(client, wa):
     assert bad.status_code == 403
 
 
-def test_signature_required(client, wa):
+def test_signature_required(client, wa, post):
     raw = json.dumps(payload("hi")).encode()
     assert client.post("/api/v1/webhooks/whatsapp", content=raw).status_code == 403
     assert post(client, payload("hi"), secret="wrong-secret").status_code == 403
     assert len(wa["outbox"]) == 0
 
 
-def test_question_is_answered_once(client, wa, db_session):
+def test_question_is_answered_once(client, wa, db_session, post):
     assert post(client, payload("my sales in October 2026")).status_code == 200
     assert len(wa["outbox"]) == 1
     reply = wa["outbox"][0]
@@ -74,7 +85,7 @@ def test_question_is_answered_once(client, wa, db_session):
     assert stored[1].delivery_status == "sent"
 
 
-def test_delivery_receipts(client, wa, db_session):
+def test_delivery_receipts(client, wa, db_session, post):
     post(client, payload("my sales in October 2026"))
     outbound_id = wa["outbox"][0]["id"]
     post(client, payload(statuses=[{"id": outbound_id, "status": "read"}]))
@@ -82,13 +93,13 @@ def test_delivery_receipts(client, wa, db_session):
     assert assistant.delivery_status == "read"
 
 
-def test_unknown_number_gets_registration_help(client, wa):
+def test_unknown_number_gets_registration_help(client, wa, post):
     post(client, payload("hi", sender="+919999999999"))
     assert wa["outbox"][0]["to"] == "+919999999999"
     assert "isn't registered" in wa["outbox"][0]["text"]
 
 
-def test_numbers_route_to_their_own_organisation(client, wa):
+def test_numbers_route_to_their_own_organisation(client, wa, post):
     # Another company's WhatsApp number can't be used to reach Ravi's data.
     other = register_org(client, "Rival Co", "admin@rival.in")
     client.post("/api/v1/whatsapp/accounts", headers=other, json={"phone_number_id": "PNID2"})
@@ -100,7 +111,7 @@ def test_numbers_route_to_their_own_organisation(client, wa):
     assert len(wa["outbox"]) == 1
 
 
-def test_stop_and_start(client, wa, db_session):
+def test_stop_and_start(client, wa, db_session, post):
     post(client, payload("START", message_id="wamid.a"))
     ravi = db_session.scalar(select(User).where(User.email == "ravi@acme.in"))
     assert ravi.whatsapp_opt_in is True and ravi.whatsapp_opt_in_at is not None
@@ -122,3 +133,13 @@ def test_simulator(client, wa):
     assert no_phone.status_code == 422
     ravi = auth_headers(client, "ravi@acme.in")
     assert client.post("/api/v1/whatsapp/simulate", headers=ravi, json={"user_id": wa["ravi"]["id"], "text": "hi"}).status_code == 403
+
+
+def test_webhook_answers_in_the_background(client, wa):
+    # Meta gets its 200 at once; the answer is sent when the worker runs the queued job.
+    assert deliver(client, payload("my sales in October 2026")).status_code == 200
+    assert len(wa["outbox"]) == 0
+    # Meta re-delivering the same message while it waits doesn't queue a second answer.
+    deliver(client, payload("my sales in October 2026"))
+    assert wa["run_jobs"]() == 1
+    assert len(wa["outbox"]) == 1

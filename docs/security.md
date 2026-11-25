@@ -65,6 +65,17 @@ organisations are refused.
   access and refresh token for that person.
 - **The shared demo** (organisation plan `demo`) has public passwords, so its passwords can't be
   changed and it has no lockout. Otherwise one visitor could lock everyone else out.
+- **Refresh tokens work once.** Each refresh returns a new pair and records the old token as used
+  (`refresh_tokens` table). If a used token comes back more than 30 seconds later, someone kept a
+  copy: every session of that person ends and they sign in again with their password. The 30
+  seconds allow two browser tabs refreshing at the same moment.
+- **Signing out** (`POST /auth/logout`, called by **Sign out**) ends that device's chain of refresh
+  tokens on the server, not just in the browser. Other devices stay signed in.
+- **Rate limits per IP address:** 30 sign-in attempts a minute and 10 new organisations an hour
+  (`LOGIN_RATE_LIMIT_PER_MINUTE`, `REGISTER_RATE_LIMIT_PER_HOUR`), on top of the per-account lockout.
+  This catches one address trying many accounts. The assistant is limited per person. The counts
+  are kept in the database, so every server process shares them and a restart doesn't reset them.
+  The visitor's real address comes from Render's proxy (`--proxy-headers` in `render.yaml`).
 - **Still open:** tokens are stored in the browser's `localStorage`, which page scripts can read. The
   next step is an httpOnly cookie through a same-origin proxy.
 
@@ -108,11 +119,51 @@ Dependabot opens weekly pull requests for outdated or vulnerable packages, and C
   `SYNC_CRON_TOKEN`, and CRM and WhatsApp keys. `.env*` files are in `.gitignore`.
 - CRM tokens are encrypted in the database (Fernet, keyed by `CREDENTIALS_KEY`).
 - If the API starts in production with the default `JWT_SECRET`, it refuses to start.
+- The scheduler's `SYNC_CRON_TOKEN` is compared in constant time.
+
+### Rotating keys
+
+- **`JWT_SECRET`:** set `JWT_PREVIOUS_SECRETS` to `["<old secret>"]` and `JWT_SECRET` to a new value.
+  Tokens signed with either are accepted, so nobody is signed out. After 7 days (the refresh token
+  lifetime), remove the old secret.
+- **`CREDENTIALS_KEY`:** set it to `new-key,old-key`. New credentials are encrypted with the first
+  key, stored ones are read with either, and each sync re-encrypts its connection with the new key.
+  Once every connection has synced, set it to just `new-key`.
+
+## Background jobs
+
+CRM syncs, model retraining and WhatsApp replies don't run inside web requests. The request adds a
+row to the `jobs` table and returns at once (202); the page checks `GET /jobs/{id}` until it's done.
+A worker (`app/worker.py`) runs the jobs. It's a thread inside the API on the free plan; with more
+traffic it can be its own process (`python -m app.worker`, with `RUN_WORKER=false` on the API).
+
+- Only one sync per connection and one retraining per organisation can wait or run at a time, so
+  repeated clicks, the hourly schedule and webhook retries don't pile up.
+- Workers claim jobs with `SELECT … FOR UPDATE SKIP LOCKED`, so with several workers each job still
+  runs once.
+- Unexpected crashes are retried (with increasing delays) and then reported with a reference
+  number, never the error itself. A job cut off by a restart is picked up again after 30 minutes.
+- Webhooks (WhatsApp, HubSpot) reply at once and queue the work. The database work in all request
+  handlers runs off the event loop, so one slow request never holds up the others.
+
+### Retention
+
+The worker deletes, every 15 minutes:
+- uploaded rows of import previews that weren't confirmed within 7 days (`IMPORT_PREVIEW_DAYS`);
+- finished jobs after 30 days;
+- expired refresh tokens and old rate-limit counts.
+
+## Production settings
+
+- Interactive API docs (`/docs`) and the OpenAPI schema are off in production. Set `API_DOCS=true`
+  to show them.
+- Browsers may call the API only from the web app's address (`CORS_ORIGINS`); `localhost` isn't
+  allowed in production.
 
 ## Not done yet
 
 - Session tokens in httpOnly cookies (see above).
-- Rate limits on login and register beyond the per-account lockout (an IP-based limit needs a
-  shared store such as Redis once there is more than one server).
 - Database backups beyond Neon's built-in point-in-time restore window, and a tested restore.
-- A background job queue, so long syncs and model training don't run inside web requests.
+- Rollup tables for analytics, so dashboards stay fast with millions of order lines.
+- SSO (SAML/OIDC) and SCIM provisioning; hosting in India; DPDP Act workflows (export and delete a
+  person's data).

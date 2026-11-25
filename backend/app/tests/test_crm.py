@@ -309,16 +309,27 @@ def test_unconfigured_provider_says_what_is_missing(client, sales_org):
     assert response.status_code == 422 and "SALESFORCE_CLIENT_ID" in response.json()["detail"]
 
 
-def test_sandbox_connect_sync_and_scope(client, db_session, sales_org, monkeypatch):
+def sync_and_wait(client, run_jobs, headers, iid) -> dict:
+    """Start a sync, let the worker run it, and return the sync's record from the history."""
+    queued = client.post(f"/api/v1/integrations/{iid}/sync", headers=headers)
+    assert queued.status_code == 202 and queued.json()["status"] == "queued"
+    run_jobs()
+    job = client.get(f"/api/v1/jobs/{queued.json()['id']}", headers=headers).json()
+    assert job["status"] == "succeeded", job
+    history = client.get(f"/api/v1/integrations/{iid}/jobs", headers=headers).json()
+    return next(h for h in history if h["id"] == job["result"]["sync_job_id"])
+
+
+def test_sandbox_connect_sync_and_scope(client, db_session, run_jobs, sales_org, monkeypatch):
     admin = sales_org["admin"]
     assert client.post("/api/v1/integrations/sandbox/connect", headers=admin).json() == {"connected": True}
     sandbox = next(p for p in client.get("/api/v1/integrations", headers=admin).json() if p["provider"] == "sandbox")
     iid = sandbox["integration"]["id"]
 
-    first = client.post(f"/api/v1/integrations/{iid}/sync", headers=admin).json()
+    first = sync_and_wait(client, run_jobs, admin, iid)
     assert first["status"] == "succeeded", first["errors"]
     assert first["counts"]["customers"]["created"] == 3 and first["counts"]["orders"]["orders_created"] == 8
-    second = client.post(f"/api/v1/integrations/{iid}/sync", headers=admin).json()
+    second = sync_and_wait(client, run_jobs, admin, iid)
     assert second["counts"]["orders"]["orders_created"] == 0  # today's order already synced
     assert "customers" in second["counts"] and second["counts"]["customers"]["fetched"] == 0
     assert len(client.get(f"/api/v1/integrations/{iid}/jobs", headers=admin).json()) == 2
@@ -333,7 +344,7 @@ def test_sandbox_connect_sync_and_scope(client, db_session, sales_org, monkeypat
     assert client.post("/api/v1/integrations/sync-due").status_code == 403
     monkeypatch.setattr(get_settings(), "sync_cron_token", "cron-secret")
     assert client.post("/api/v1/integrations/sync-due", headers={"X-Sync-Token": "wrong"}).status_code == 403
-    assert client.post("/api/v1/integrations/sync-due", headers={"X-Sync-Token": "cron-secret"}).json()["synced"] == 0  # just synced
+    assert client.post("/api/v1/integrations/sync-due", headers={"X-Sync-Token": "cron-secret"}).json()["queued"] == 0  # just synced
 
     assert client.delete(f"/api/v1/integrations/{iid}", headers=admin).status_code == 204
     assert db_session.scalar(select(Customer).where(Customer.code == "SBX-A1")) is not None  # synced data stays
@@ -345,3 +356,38 @@ def test_hubspot_webhook_rejects_bad_signatures(client, monkeypatch):
     response = client.post("/api/v1/webhooks/hubspot", content=b"[]", headers={"X-HubSpot-Signature-v3": "nope",
                                                                               "X-HubSpot-Request-Timestamp": str(int(time.time() * 1000))})
     assert response.status_code == 403
+
+
+def test_repeated_sync_clicks_queue_one_job(client, run_jobs, sales_org, monkeypatch):
+    admin = sales_org["admin"]
+    client.post("/api/v1/integrations/sandbox/connect", headers=admin)
+    iid = next(p for p in client.get("/api/v1/integrations", headers=admin).json() if p["provider"] == "sandbox")["integration"]["id"]
+
+    first = client.post(f"/api/v1/integrations/{iid}/sync", headers=admin).json()
+    again = client.post(f"/api/v1/integrations/{iid}/sync", headers=admin).json()
+    assert again["id"] == first["id"]  # still waiting: the same job, not a second sync
+    # The schedule doesn't add another one either.
+    monkeypatch.setattr(get_settings(), "sync_cron_token", "cron-secret")
+    client.post("/api/v1/integrations/sync-due", headers={"X-Sync-Token": "cron-secret"})
+    assert run_jobs() == 1
+    assert len(client.get(f"/api/v1/integrations/{iid}/jobs", headers=admin).json()) == 1
+
+    # Once it finished, a new click starts a new sync. Other companies can't see the job.
+    assert client.post(f"/api/v1/integrations/{iid}/sync", headers=admin).json()["id"] != first["id"]
+    rival = register_org(client, "Rival Co", "admin@rival.in")
+    assert client.get(f"/api/v1/jobs/{first['id']}", headers=rival).status_code == 404
+    ravi = auth_headers(client, "ravi@acme.in")  # same company, but didn't start it and isn't an admin
+    assert client.get(f"/api/v1/jobs/{first['id']}", headers=ravi).status_code == 404
+
+
+def test_credentials_survive_key_rotation(monkeypatch):
+    settings = get_settings()
+    monkeypatch.setattr(settings, "credentials_key", "old-key")
+    blob = base.encrypt(base.Tokens("at", "rt", 1.0))
+    monkeypatch.setattr(settings, "credentials_key", "new-key,old-key")
+    assert base.decrypt(blob).access_token == "at"  # still readable during the rotation
+    rotated = base.reencrypt(blob)
+    monkeypatch.setattr(settings, "credentials_key", "new-key")
+    assert base.decrypt(rotated).access_token == "at"  # re-encrypted with the new key
+    with pytest.raises(base.AuthError):
+        base.decrypt(blob)  # the old copy needs the old key

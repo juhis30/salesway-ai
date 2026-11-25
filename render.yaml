@@ -10,8 +10,11 @@ services:
     region: singapore
     rootDir: backend
     buildCommand: pip install -r requirements.txt
-    # Applies any new database migrations, then starts the API.
-    startCommand: alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    # Applies any new database migrations, then starts the API (which also runs queued jobs).
+    # --proxy-headers/--forwarded-allow-ips: only Render's proxy can reach the app, so trust its
+    # X-Forwarded-* headers. Without them the app sees http:// URLs (breaking HubSpot's webhook
+    # signatures) and the proxy's address instead of the visitor's (breaking per-IP rate limits).
+    startCommand: alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips='*'
     healthCheckPath: /health
     autoDeployTrigger: checksPass
     envVars:
@@ -24,7 +27,7 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: CORS_ORIGINS
-        value: '["https://salesway-web.onrender.com","http://localhost:3000"]'
+        value: '["https://salesway-web.onrender.com"]'
       - key: LLM_PROVIDER
         value: mock
       - key: WHATSAPP_PROVIDER

@@ -14,7 +14,8 @@ from app.core.ratelimit import RateLimiter
 from app.models import Conversation, Message, User
 
 router = APIRouter(prefix="/assistant", tags=["assistant"])
-limiter = RateLimiter(get_settings().assistant_rate_limit_per_minute)
+limiter = RateLimiter("assistant", get_settings().assistant_rate_limit_per_minute,
+                      message="Too many messages, please wait a minute")
 
 
 class AskIn(BaseModel):
@@ -76,7 +77,7 @@ def _own_conversation(db: Session, user: User, conversation_id: uuid.UUID) -> Co
 @router.post("/messages", response_model=AskOut)
 def ask(body: AskIn, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     """Ask a question. The answer is computed from your data, within what your role may see."""
-    limiter.check(str(user.id))
+    limiter.check(db, str(user.id))
     if body.conversation_id:
         conversation = _own_conversation(db, user, body.conversation_id)
     else:

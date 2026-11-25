@@ -9,6 +9,10 @@ import os
 import warnings
 from pathlib import Path
 
+# Tests run queued jobs themselves (the run_jobs fixture), in the test's own transaction. Must be
+# set before the app's settings are first read.
+os.environ["RUN_WORKER"] = "false"
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.exc import SAWarning
@@ -99,6 +103,14 @@ def client(db_session):
     with TestClient(app) as test_client:
         yield test_client
     app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def run_jobs(db_session):
+    """Run every queued job now, as the worker would. Returns how many ran."""
+    from app.services.jobs import run_pending
+
+    return lambda: run_pending(db_session)
 
 
 def auth_headers(client: TestClient, email: str, password: str = PASSWORD) -> dict[str, str]:

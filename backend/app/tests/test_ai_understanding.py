@@ -129,11 +129,14 @@ def test_grounding_check():
     assert ungrounded_numbers("Revenue ₹12 L, up 40%", facts) == ["12 L", "40%"]
 
 
-def test_rate_limiter():
-    limiter = RateLimiter(limit=3)
+def test_rate_limiter(db_session):
+    limiter = RateLimiter("test", limit=3)
     for _ in range(3):
-        limiter.check("u1")
+        limiter.check(db_session, "u1")
     with pytest.raises(Exception) as exc:
-        limiter.check("u1")
-    assert exc.value.status_code == 429
-    limiter.check("u2")  # other users unaffected
+        limiter.check(db_session, "u1")
+    assert exc.value.status_code == 429 and int(exc.value.headers["Retry-After"]) <= 61
+    limiter.check(db_session, "u2")  # other users unaffected
+    # Counts live in the database, so another limiter object (another server process) sees them.
+    with pytest.raises(Exception):
+        RateLimiter("test", limit=3).check(db_session, "u1")
