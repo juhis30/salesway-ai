@@ -40,6 +40,12 @@ export function clearTokens() {
   }
 }
 
+// The free hosting plan stops the API when idle; the first request after that waits about a
+// minute while it starts. Pages that are about to need it call this early so the wait overlaps typing.
+export function wakeServer() {
+  fetch(new URL("/health", API_URL), { cache: "no-store" }).catch(() => {});
+}
+
 export function hasSession(): boolean {
   return read(ACCESS_KEY) !== null;
 }

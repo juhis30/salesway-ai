@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AuthCard } from "@/components/AuthCard";
+import { wakeServer } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 
 const DEMO_USERS = [
@@ -21,10 +22,19 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [slow, setSlow] = useState(false);
 
   useEffect(() => {
     if (me) router.replace("/dashboard");
   }, [me, router]);
+
+  useEffect(wakeServer, []);
+
+  useEffect(() => {
+    if (!busy) return setSlow(false);
+    const timer = setTimeout(() => setSlow(true), 5000);
+    return () => clearTimeout(timer);
+  }, [busy]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -52,6 +62,12 @@ export default function LoginPage() {
         </div>
         {error && <p role="alert" className="text-sm text-critical">{error}</p>}
         <button className="btn-primary w-full" disabled={busy}>{busy ? "Signing in…" : "Sign in"}</button>
+        {slow && (
+          <p role="status" className="text-sm text-ink-2">
+            Waking up the server. On the free hosting plan it sleeps when nobody has used it for a while,
+            so the first sign-in can take up to a minute. After that it&apos;s quick.
+          </p>
+        )}
       </form>
 
       <p className="mt-4 text-center text-sm text-ink-2">
