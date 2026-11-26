@@ -93,3 +93,8 @@ backend/
 data/sample/       generated sample CSVs
 docs/              architecture, API reference, plan, metrics, security and topic guides (docs/README.md)
 ```
+
+## License
+
+Copyright (c) 2026 Juhi Shrotriya. All rights reserved. This repository is public for review only;
+no use, copying or distribution is permitted without written permission. See [LICENSE](LICENSE).
