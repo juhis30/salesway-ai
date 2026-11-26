@@ -3,7 +3,7 @@
 AI-powered sales intelligence for Indian sales teams: upload your sales data, see real
 analytics, and ask questions in plain language on the web or WhatsApp.
 
-> **Status: Phases 1–5 complete: analytics, web dashboard, AI assistant (web + WhatsApp), predictive models and read-only CRM connectors.** See [docs/plan.md](docs/plan.md), [docs/assistant.md](docs/assistant.md), [docs/predictions.md](docs/predictions.md) and [docs/integrations.md](docs/integrations.md).
+> **Status: Phases 1–5 complete (analytics, web dashboard, AI assistant on web and WhatsApp, predictive models, read-only CRM connectors), plus Phase 6 security and reliability work.** Start with the [architecture overview](docs/architecture.md) (diagrams of every main flow); all docs are listed in [docs/README.md](docs/README.md).
 
 **Live demo:** https://salesway-web.onrender.com (free hosting: the first visit after a quiet spell takes about a minute to wake up). Demo logins below. Hosting details: [docs/deployment.md](docs/deployment.md).
 
@@ -91,5 +91,5 @@ backend/
     seed.py        demo data generator
   migrations/      Alembic
 data/sample/       generated sample CSVs
-docs/              plan and metric definitions
+docs/              architecture, API reference, plan, metrics, security and topic guides (docs/README.md)
 ```
